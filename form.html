@@ -457,7 +457,7 @@ async function lookupNoreg() {
       if(json.existing) {
         setNoregStatus('existing',
           `⚠️ <strong>Noreg sudah terdaftar.</strong> Data lama akan diperbarui saat submit.<br>` +
-          `<span style="opacity:.7">Tgl: ${json.existing.voteTanggal||'—'} · ${json.existing.konfirmasi||'Ya'}</span>`);
+          `<span style="opacity:.7">Tgl: ${json.existing.tanggal||'—'} · ${json.existing.ikutTour||'Ya'}</span>`);
         prefillExisting(json.existing);
       } else {
         setNoregStatus('found',
@@ -507,17 +507,17 @@ function showFormDetail(show) {
 
 function prefillExisting(d) {
   if(d.noHp) document.getElementById('noHp').value = d.noHp;
-  if(d.voteTanggal) {
+  if(d.tanggal) {
     const map = {'16-17 Agustus 2026':'d1','19-20 September 2026':'d2','26-27 September 2026':'d3'};
-    const key = map[d.voteTanggal];
-    if(key) pilihTanggal(d.voteTanggal, key, Object.values(map).filter(v=>v!==key));
+    const key = map[d.tanggal];
+    if(key) pilihTanggal(d.tanggal, key, Object.values(map).filter(v=>v!==key));
   }
   if(d.transportasi) {
     if(d.transportasi.includes('Bus')) pilihTransport('Ikut Bus Panitia','tBus','tMobil','active-blue');
     else pilihTransport('Kendaraan Sendiri','tMobil','tBus','active-red');
   }
-  if(d.konfirmasi === 'Tidak') pilihIkut('Tidak');
-  else if(d.konfirmasi === 'Ya') pilihIkut('Ya');
+  if(d.ikutTour === 'Tidak') pilihIkut('Tidak');
+  else if(d.ikutTour === 'Ya') pilihIkut('Ya');
 }
 
 // ── IKUT / TIDAK ──────────────────────────────────────────────────
@@ -744,19 +744,22 @@ async function doSubmitIkut() {
   const total    = 1 + state.jumlahIstri + state.jumlahAnak;
 
   const payload = {
-    action      : 'saveParticipant',
-    noreg, nama, section, noHp, catatan,
-    kehadiran   : state.kehadiran,
-    namaIstri,
-    paxDewasa   : 1 + state.jumlahIstri,
-    paxAnak     : state.jumlahAnak,
-    totalPax    : total,
-    anak        : state.anak,
-    transportasi: state.transport,
-    modelLengan : state.lengan,
-    ukuranKaos  : state.ukuran,
-    voteTanggal : state.tanggal,
-    konfirmasi  : 'Ya'
+    action       : 'saveParticipant',
+    noreg, nama, section,
+    noHp         : noHp,
+    tanggal      : state.tanggal,       // → row[5] Tanggal Tour
+    kehadiran    : state.kehadiran,     // → row[6] Kehadiran
+    jumlahIstri  : state.jumlahIstri,  // → row[7] Jumlah Istri
+    namaIstri    : namaIstri,           // → row[8] Nama Istri
+    totalDewasa  : 1 + state.jumlahIstri, // → row[9]
+    jumlahAnak   : state.jumlahAnak,   // → row[10]
+    totalPax     : total,               // → row[11]
+    anak         : state.anak,          // → row[12-27]
+    transportasi : state.transport,    // → row[28]
+    modelLengan  : state.lengan,       // → row[29]
+    ukuranKaos   : state.ukuran,       // → row[30]
+    catatan      : catatan,             // → row[31]
+    ikutTour     : 'Ya'                // → row[32]
   };
 
   try {
@@ -791,8 +794,10 @@ async function doSubmitTidak() {
   const section = currentKaryawan?.section || '';
 
   const payload = {
-    action:'saveParticipant', noreg, nama, section,
-    konfirmasi:'Tidak', paxDewasa:0, paxAnak:0, totalPax:0
+    action      : 'saveParticipant',
+    noreg, nama, section,
+    totalDewasa : 0, jumlahAnak: 0, totalPax: 0,
+    ikutTour    : 'Tidak'
   };
 
   try {
