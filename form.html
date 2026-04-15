@@ -1,1 +1,865 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Form Pendaftaran Tour · PPIC &amp; WH 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05070f;--s1:#0a0d1a;--s2:#0f1324;--card:#111527;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.16);
+  --text:#e8eaf6;--text2:#7986b0;--text3:#3d4a72;
+  --blue:#4f8ef7;--green:#1fd17a;--red:#f04f6a;--amber:#f5a52a;
+  --teal:#00cdb8;--purple:#9b7ff5;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
+  --r:16px;--r2:12px;--rr:28px
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;padding:0}
 
+/* BG mesh */
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(79,142,247,0.12),transparent),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(155,127,245,0.08),transparent);pointer-events:none;z-index:0}
+
+.page{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:20px 16px 60px}
+
+/* ── HEADER ── */
+.hdr{text-align:center;padding:24px 0 20px}
+.hdr-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.22);border-radius:20px;padding:4px 14px;font-size:10px;font-weight:600;color:var(--blue);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px}
+.hdr-title{font-size:24px;font-weight:700;line-height:1.2;margin-bottom:6px}
+.hdr-title span{background:linear-gradient(135deg,#f7c948,#f04f6a,#9b7ff5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hdr-sub{font-size:12px;color:var(--text3)}
+.notice{margin-top:14px;background:rgba(245,165,42,0.08);border:1px solid rgba(245,165,42,0.2);border-radius:var(--r2);padding:10px 14px;font-size:12px;color:rgba(255,255,255,0.55);line-height:1.6;text-align:left}
+.notice strong{color:#f5a52a}
+#notice-header{transition:all .3s}
+
+/* ── CARD ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;margin-bottom:12px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.025),transparent);pointer-events:none}
+.card-label{font-size:10px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.card-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── FORM ELEMENTS ── */
+.form-group{margin-bottom:14px}
+.form-group:last-child{margin-bottom:0}
+.f-label{font-size:11px;font-weight:500;color:var(--text2);margin-bottom:6px;display:block}
+.f-label .req{color:var(--red);margin-left:2px}
+.f-input{width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:var(--r2);padding:11px 14px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:all .2s;-webkit-appearance:none}
+.f-input:focus{border-color:var(--blue);background:rgba(79,142,247,0.06)}
+.f-input::placeholder{color:var(--text3)}
+.f-input[readonly]{opacity:.6;cursor:default;background:rgba(255,255,255,0.02)}
+.f-input.valid{border-color:var(--green)}
+.f-input.invalid{border-color:var(--red)}
+select.f-input{background:var(--s1);cursor:pointer}
+select.f-input option{background:var(--s2)}
+textarea.f-input{resize:none}
+
+/* NOREG INPUT SPECIAL */
+.noreg-wrap{position:relative}
+.noreg-wrap .f-input{padding-right:44px;font-family:var(--mono);font-size:16px;font-weight:500;letter-spacing:1px}
+.noreg-spinner{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;display:none}
+.noreg-check{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:16px;display:none}
+@keyframes spin{to{transform:translateY(-50%) rotate(360deg)}}
+
+/* STATUS BUBBLE */
+.noreg-status{margin-top:8px;padding:10px 13px;border-radius:10px;font-size:12px;line-height:1.5;display:none}
+.noreg-status.found{background:rgba(31,209,122,0.08);border:1px solid rgba(31,209,122,0.2);color:#6ee7b7}
+.noreg-status.notfound{background:rgba(240,79,106,0.08);border:1px solid rgba(240,79,106,0.2);color:#fda4af}
+.noreg-status.existing{background:rgba(245,165,42,0.08);border:1px solid rgba(245,165,42,0.2);color:#f5a52a}
+.noreg-status.loading{background:rgba(79,142,247,0.06);border:1px solid rgba(79,142,247,0.15);color:var(--text2)}
+
+/* IDENTITY CARD */
+.identity{background:rgba(79,142,247,0.06);border:1px solid rgba(79,142,247,0.18);border-radius:var(--r2);padding:12px 14px;margin-top:12px;display:none;animation:fadeIn .3s ease}
+.identity.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.id-name{font-size:16px;font-weight:700;color:var(--text)}
+.id-sec{font-size:11px;color:var(--blue);margin-top:3px;font-weight:500}
+.id-noreg{font-size:10px;color:var(--text3);margin-top:2px;font-family:var(--mono)}
+
+/* ── TOGGLE BUTTONS ── */
+.toggle-row{display:flex;gap:8px;flex-wrap:wrap}
+.tbtn{flex:1;min-width:80px;padding:10px 12px;border-radius:10px;text-align:center;cursor:pointer;font-size:12px;font-weight:600;border:1px solid var(--border2);background:rgba(255,255,255,0.03);color:var(--text2);transition:all .15s;user-select:none;font-family:var(--font)}
+.tbtn.active-green{border-color:#1fd17a;background:rgba(31,209,122,0.12);color:#6ee7b7}
+.tbtn.active-blue{border-color:#4f8ef7;background:rgba(79,142,247,0.12);color:#93c5fd}
+.tbtn.active-red{border-color:#f04f6a;background:rgba(240,79,106,0.12);color:#fda4af}
+
+/* ── DATE OPTIONS ── */
+.date-opts{display:flex;flex-direction:column;gap:8px}
+.date-opt{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.02);transition:all .15s}
+.date-opt:active{transform:scale(.98)}
+.date-opt.active{border-color:var(--amber);background:rgba(245,165,42,0.08)}
+.do-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--text3);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.date-opt.active .do-radio{border-color:var(--amber)}
+.do-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);opacity:0;transition:opacity .15s}
+.date-opt.active .do-dot{opacity:1}
+.do-info .do-title{font-size:13px;font-weight:600;color:var(--text2);transition:color .15s}
+.do-info .do-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.date-opt.active .do-title{color:#f5a52a;font-weight:700}
+
+/* ── SIZE BUTTONS ── */
+.size-row{display:flex;gap:6px;flex-wrap:wrap}
+.sbtn{padding:7px 13px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;border:1px solid var(--border);background:rgba(255,255,255,0.03);color:var(--text2);transition:all .15s;user-select:none;font-family:var(--mono)}
+.sbtn.active{border-color:var(--teal);background:rgba(0,205,184,0.12);color:var(--teal)}
+
+/* ── COUNTER ── */
+.counter-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--r2);padding:10px 14px;margin-bottom:8px}
+.counter-label{font-size:13px;font-weight:500}
+.counter-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.counter-ctrl{display:flex;align-items:center;gap:10px}
+.cnt-btn{width:30px;height:30px;border-radius:50%;border:1px solid var(--border2);background:rgba(255,255,255,0.05);color:var(--text);font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--font);line-height:1;transition:all .15s}
+.cnt-btn:active{transform:scale(.92)}
+.cnt-minus{color:#fda4af;border-color:rgba(240,79,106,0.3)}
+.cnt-plus{color:#6ee7b7;border-color:rgba(31,209,122,0.3)}
+.cnt-val{font-size:18px;font-weight:700;min-width:24px;text-align:center;font-family:var(--mono)}
+
+/* ANAK FORM */
+.anak-item{background:rgba(245,165,42,0.05);border:1px solid rgba(245,165,42,0.15);border-radius:10px;padding:12px;margin-bottom:8px}
+.anak-item-title{font-size:10px;font-weight:600;color:var(--amber);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.anak-row{display:grid;grid-template-columns:1fr 80px;gap:8px}
+
+/* ── SECTION DIVIDER ── */
+.sec-div{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text3);text-align:center;padding:6px 0 8px;display:flex;align-items:center;gap:10px}
+.sec-div::before,.sec-div::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ── SUMMARY CARD ── */
+.summary-card{background:rgba(31,209,122,0.05);border:1px solid rgba(31,209,122,0.15);border-radius:var(--r2);padding:14px;margin-bottom:12px;font-size:12px;color:var(--text2);line-height:2;display:none}
+.summary-card strong{color:var(--text)}
+.summary-card .s-val{color:#f5a52a;font-weight:600}
+
+/* ── MISSING ── */
+.missing-box{background:rgba(240,79,106,0.08);border:1.5px solid rgba(240,79,106,0.25);border-radius:var(--r2);padding:14px 16px;margin-bottom:12px;font-size:12px;color:var(--text);line-height:2;display:none}
+
+/* ── SUBMIT BTN ── */
+.submit-btn{width:100%;padding:16px;border-radius:var(--rr);border:none;background:linear-gradient(90deg,#f7c948,#f04f6a,#9b7ff5);color:white;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);letter-spacing:.3px;transition:opacity .2s;position:relative;overflow:hidden}
+.submit-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,0.1),transparent)}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed}
+.submit-btn:active:not(:disabled){opacity:.85;transform:scale(.99)}
+.wrap-tidak .submit-btn{background:linear-gradient(90deg,#374151,#6b7280)}
+
+/* ── SUCCESS ── */
+.success-screen{display:none;text-align:center;padding:40px 20px;animation:fadeIn .4s ease}
+.success-screen.show{display:block}
+.success-icon{font-size:64px;margin-bottom:16px}
+.success-h{font-size:22px;font-weight:700;margin-bottom:10px;background:linear-gradient(135deg,#1fd17a,#4f8ef7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.success-sub{font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:24px}
+.success-sub strong{color:var(--text)}
+.btn-reset{background:rgba(255,255,255,0.07);border:1px solid var(--border2);color:var(--text);padding:11px 28px;border-radius:var(--rr);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+
+/* ── MODAL KONFIRMASI ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:300;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px)}
+.modal-overlay.show{display:flex!important}
+.modal-panel{background:linear-gradient(160deg,#111629,#0b0e1c);border:1px solid rgba(255,255,255,0.1);border-radius:var(--r) var(--r) 0 0;width:100%;max-width:480px;padding:22px 20px 40px;max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.modal-hdr{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.modal-icon{font-size:24px;flex-shrink:0}
+.modal-title{font-size:15px;font-weight:700}
+.modal-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.modal-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.modal-row:last-child{border-bottom:none}
+.mr-emoji{font-size:15px;width:20px;flex-shrink:0;margin-top:1px}
+.mr-label{font-size:10px;color:var(--text3);margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.mr-val{font-size:13px;color:var(--text);font-weight:600;line-height:1.5}
+.modal-footer{display:flex;gap:10px;margin-top:20px}
+.btn-back{flex:1;padding:12px;border-radius:var(--r2);border:1px solid var(--border2);background:transparent;color:var(--text2);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.btn-confirm{flex:2;padding:12px;border-radius:var(--r2);border:none;background:linear-gradient(90deg,#1fd17a,#059669);color:white;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font)}
+.btn-confirm:disabled{opacity:.4;cursor:not-allowed}
+
+/* LOADING */
+.overlay-load{position:fixed;inset:0;background:rgba(5,7,15,0.85);display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:400}
+.overlay-load.show{display:flex}
+.ov-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,0.08);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+.ov-text{font-size:13px;color:var(--text2)}
+
+/* ERR */
+.err-msg{color:var(--red);font-size:11px;margin-top:5px;display:none}
+
+/* HIDDEN */
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="overlay-load" id="overlay">
+  <div class="ov-spinner"></div>
+  <span class="ov-text" id="overlayText">Menyimpan...</span>
+</div>
+
+<!-- MODAL KONFIRMASI IKUT -->
+<div class="modal-overlay" id="modalIkut" onclick="closeModalIkut(event)">
+  <div class="modal-panel">
+    <div class="modal-hdr">
+      <span class="modal-icon">📋</span>
+      <div><div class="modal-title">Konfirmasi Data</div><div class="modal-sub">Pastikan semua data sudah benar</div></div>
+    </div>
+    <div id="modalIkutBody"></div>
+    <div class="modal-footer">
+      <button class="btn-back" onclick="closeModalIkut()">✏️ Ubah</button>
+      <button class="btn-confirm" id="btnConfirmIkut" onclick="doSubmitIkut()">✅ Ya, Daftarkan!</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL KONFIRMASI TIDAK IKUT -->
+<div class="modal-overlay" id="modalTidak" onclick="closeModalTidak(event)">
+  <div class="modal-panel">
+    <div class="modal-hdr">
+      <span class="modal-icon">❌</span>
+      <div><div class="modal-title">Konfirmasi Tidak Ikut</div><div class="modal-sub">Pastikan keputusan Anda sudah benar</div></div>
+    </div>
+    <div id="modalTidakBody"></div>
+    <div class="modal-footer">
+      <button class="btn-back" onclick="closeModalTidak()">← Kembali</button>
+      <button class="btn-confirm" id="btnConfirmTidak" style="background:linear-gradient(90deg,#6b7280,#374151)" onclick="doSubmitTidak()">✅ Ya, Konfirmasi</button>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+  <div class="hdr">
+    <div class="hdr-chip">🚌 PPIC &amp; WH 2026</div>
+    <div class="hdr-title">Form Pendaftaran<br><span>Tour Karyawan 2026</span></div>
+    <div class="hdr-sub">Isi formulir berikut untuk mendaftarkan diri &amp; keluarga</div>
+    <div class="notice" id="notice-header">
+      Anak yang didaftarkan adalah yang <strong>belum menikah</strong>
+    </div>
+  </div>
+
+  <!-- SUCCESS SCREEN -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✅</div>
+    <div class="success-h" id="successTitle">Pendaftaran Berhasil!</div>
+    <div class="success-sub" id="successSub"></div>
+    <button class="btn-reset" onclick="resetForm()">Isi Form Baru / Revisi</button>
+  </div>
+
+  <!-- MAIN FORM -->
+  <div id="mainForm">
+
+    <!-- STEP 1: NOREG -->
+    <div class="card">
+      <div class="card-label">👤 Identitas Karyawan</div>
+      <div class="form-group">
+        <label class="f-label">Noreg <span class="req">*</span></label>
+        <div class="noreg-wrap">
+          <input class="f-input" type="tel" id="noreg" placeholder="Masukkan Noreg 7 digit"
+            maxlength="7" autocomplete="off"
+            oninput="onNoregInput()" onblur="lookupNoreg()">
+          <div class="noreg-spinner" id="noregSpinner"></div>
+          <span class="noreg-check" id="noregCheck"></span>
+        </div>
+        <div class="noreg-status" id="noregStatus"></div>
+      </div>
+      <!-- Auto-fill identity -->
+      <div class="identity" id="identityCard">
+        <div class="id-name" id="idName">—</div>
+        <div class="id-sec" id="idSection">—</div>
+        <div class="id-noreg" id="idNoreg">Noreg: —</div>
+      </div>
+    </div>
+
+    <!-- FORM DETAIL (muncul setelah Noreg valid) -->
+    <div id="formDetail" class="hidden">
+
+      <!-- KONFIRMASI KEIKUTSERTAAN -->
+      <div class="card" id="cardKonfirmasi">
+        <div class="card-label">🎯 Konfirmasi Keikutsertaan</div>
+        <div class="form-group">
+          <label class="f-label">Apakah <strong id="namaKonfirmasi">Anda</strong> ikut tour? <span class="req">*</span></label>
+          <div class="toggle-row">
+            <div class="tbtn" id="btnIkut" onclick="pilihIkut('Ya')">✅ Ya, Saya Ikut</div>
+            <div class="tbtn" id="btnTidak" onclick="pilihIkut('Tidak')">❌ Tidak Ikut</div>
+          </div>
+          <div class="err-msg" id="errIkut">Wajib dipilih</div>
+        </div>
+      </div>
+
+      <!-- FORM IKUT (muncul jika pilih Ya) -->
+      <div id="formIkut" class="hidden">
+
+        <!-- KONTAK -->
+        <div class="card">
+          <div class="card-label">📞 Kontak</div>
+          <div class="form-group">
+            <label class="f-label">No. HP / WhatsApp <span class="req">*</span></label>
+            <input class="f-input" type="tel" id="noHp" placeholder="08xxxxxxxxxx">
+            <div class="err-msg" id="errNoHp">Wajib diisi</div>
+          </div>
+        </div>
+
+        <!-- TANGGAL -->
+        <div class="card">
+          <div class="card-label">📅 Pilihan Tanggal Tour</div>
+          <div class="date-opts">
+            <div class="date-opt" id="d1" onclick="pilihTanggal('16-17 Agustus 2026','d1',['d2','d3'])">
+              <div class="do-radio"><div class="do-dot"></div></div>
+              <div class="do-info">
+                <div class="do-title">🗓️ 16 – 17 Agustus 2026</div>
+                <div class="do-sub">Minggu – Senin · Setelah HUT RI 🇮🇩</div>
+              </div>
+            </div>
+            <div class="date-opt" id="d2" onclick="pilihTanggal('19-20 September 2026','d2',['d1','d3'])">
+              <div class="do-radio"><div class="do-dot"></div></div>
+              <div class="do-info">
+                <div class="do-title">🗓️ 19 – 20 September 2026</div>
+                <div class="do-sub">Sabtu – Minggu</div>
+              </div>
+            </div>
+            <div class="date-opt" id="d3" onclick="pilihTanggal('26-27 September 2026','d3',['d1','d2'])">
+              <div class="do-radio"><div class="do-dot"></div></div>
+              <div class="do-info">
+                <div class="do-title">🗓️ 26 – 27 September 2026</div>
+                <div class="do-sub">Sabtu – Minggu</div>
+              </div>
+            </div>
+          </div>
+          <div class="err-msg" id="errTanggal">Wajib dipilih</div>
+        </div>
+
+        <!-- KEHADIRAN & KELUARGA -->
+        <div class="card">
+          <div class="card-label">👨‍👩‍👧‍👦 Peserta</div>
+          <div class="form-group">
+            <label class="f-label">Tipe Kehadiran <span class="req">*</span></label>
+            <select class="f-input" id="tipeKehadiran" onchange="onKehadiranChange()">
+              <option value="">— Pilih —</option>
+              <option>Sendiri</option>
+              <option>Bawa Keluarga</option>
+            </select>
+            <div class="err-msg" id="errKehadiran">Wajib dipilih</div>
+          </div>
+
+          <!-- Keluarga section -->
+          <div id="sectionKeluarga" class="hidden">
+            <div class="counter-row">
+              <div>
+                <div class="counter-label">👩 Istri</div>
+                <div class="counter-sub">Maks. 1 orang</div>
+              </div>
+              <div class="counter-ctrl">
+                <button class="cnt-btn cnt-minus" onclick="ubahIstri(-1)">−</button>
+                <span class="cnt-val" id="valIstri">0</span>
+                <button class="cnt-btn cnt-plus" onclick="ubahIstri(1)">+</button>
+              </div>
+            </div>
+            <div id="inputIstri" class="hidden" style="margin-bottom:10px">
+              <input class="f-input" type="text" id="namaIstri" placeholder="Nama istri">
+            </div>
+            <div class="counter-row">
+              <div>
+                <div class="counter-label">👶 Anak</div>
+                <div class="counter-sub">Hanya yang belum menikah</div>
+              </div>
+              <div class="counter-ctrl">
+                <button class="cnt-btn cnt-minus" onclick="ubahAnak(-1)">−</button>
+                <span class="cnt-val" id="valAnak">0</span>
+                <button class="cnt-btn cnt-plus" onclick="ubahAnak(1)">+</button>
+              </div>
+            </div>
+            <div id="anakList"></div>
+          </div>
+        </div>
+
+        <!-- TRANSPORTASI -->
+        <div class="card">
+          <div class="card-label">🚌 Transportasi</div>
+          <div class="form-group">
+            <label class="f-label">Cara Berangkat <span class="req">*</span></label>
+            <div class="toggle-row">
+              <div class="tbtn" id="tBus" onclick="pilihTransport('Ikut Bus Panitia','tBus','tMobil','active-blue')">🚌 Bus Panitia</div>
+              <div class="tbtn" id="tMobil" onclick="pilihTransport('Kendaraan Sendiri','tMobil','tBus','active-red')">🚗 Kendaraan Sendiri</div>
+            </div>
+            <div class="err-msg" id="errTransport">Wajib dipilih</div>
+          </div>
+        </div>
+
+        <!-- KAOS -->
+        <div class="card">
+          <div class="card-label">👕 Kaos</div>
+          <div class="form-group">
+            <label class="f-label">Model Lengan <span class="req">*</span></label>
+            <div class="toggle-row">
+              <div class="tbtn" id="lk1" onclick="pilihLengan('Lengan Pendek','lk1','lk2')">👕 Pendek</div>
+              <div class="tbtn" id="lk2" onclick="pilihLengan('Lengan Panjang','lk2','lk1')">🧥 Panjang</div>
+            </div>
+            <div class="err-msg" id="errLengan">Wajib dipilih</div>
+          </div>
+          <div class="form-group">
+            <label class="f-label">Ukuran <span class="req">*</span></label>
+            <div class="size-row" id="sizeRow"></div>
+            <div class="err-msg" id="errSize">Wajib dipilih</div>
+          </div>
+        </div>
+
+        <!-- CATATAN -->
+        <div class="card">
+          <div class="card-label">📝 Catatan</div>
+          <textarea class="f-input" id="catatan" rows="3" placeholder="Alergi, kebutuhan khusus, dll... (opsional)"></textarea>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary-card" id="summaryCard"></div>
+        <div class="missing-box" id="missingBox"></div>
+
+        <div style="margin-bottom:12px">
+          <button class="submit-btn" id="btnDaftar" onclick="bukaModalIkut()">DAFTAR SEKARANG 🚌</button>
+        </div>
+      </div>
+
+      <!-- TOMBOL TIDAK IKUT -->
+      <div id="wrapTidak" class="hidden" style="margin-bottom:12px">
+        <div class="wrap-tidak">
+          <button class="submit-btn" onclick="bukaModalTidak()">KONFIRMASI TIDAK IKUT</button>
+        </div>
+      </div>
+
+    </div><!-- /formDetail -->
+  </div><!-- /mainForm -->
+</div><!-- /page -->
+
+<script>
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbw6dArxe_HJ7Ww7p6oxDBvi64kpPixUQ2vMSv7noYuEK3LN5wY7M-e2JbgrtumqONdH/exec';
+const SIZES   = ['S','M','L','XL','XXL','3XL','4XL','5XL','6XL'];
+
+let currentKaryawan = null;
+let statusIkut      = '';
+let lookupTimer     = null;
+
+const state = {
+  tanggal:'', kehadiran:'', transport:'', lengan:'', ukuran:'',
+  jumlahIstri:0, jumlahAnak:0, anak:[]
+};
+
+// ── NOREG LOOKUP ─────────────────────────────────────────────────
+function onNoregInput() {
+  const val = document.getElementById('noreg').value;
+  clearTimeout(lookupTimer);
+  hideIdentity();
+  setNoregStatus('','');
+  if(val.length >= 5) {
+    lookupTimer = setTimeout(lookupNoreg, 600);
+  }
+}
+
+async function lookupNoreg() {
+  const noreg = document.getElementById('noreg').value.trim();
+  if(!noreg || noreg.length < 5) return;
+
+  showNoregLoading(true);
+  setNoregStatus('loading','🔍 Mengecek Noreg...');
+
+  try {
+    const res  = await fetch(`${GAS_URL}?action=checkNoreg&noreg=${encodeURIComponent(noreg)}`);
+    const json = await res.json();
+
+    if(json.status === 'found') {
+      currentKaryawan = json;
+      showIdentity(json.nama, json.section, json.noreg);
+
+      if(json.existing) {
+        setNoregStatus('existing',
+          `⚠️ <strong>Noreg sudah terdaftar.</strong> Data lama akan diperbarui saat submit.<br>` +
+          `<span style="opacity:.7">Tgl: ${json.existing.voteTanggal||'—'} · ${json.existing.konfirmasi||'Ya'}</span>`);
+        prefillExisting(json.existing);
+      } else {
+        setNoregStatus('found',
+          `✅ <strong>${json.nama}</strong> · ${json.section}<br>` +
+          `<span style="opacity:.7">Noreg valid. Silakan lanjutkan pengisian.</span>`);
+      }
+      showFormDetail(true);
+    } else {
+      setNoregStatus('notfound','❌ Noreg tidak ditemukan. Hubungi panitia.');
+      showFormDetail(false);
+      currentKaryawan = null;
+    }
+  } catch(err) {
+    setNoregStatus('notfound','⚠️ Gagal cek Noreg. Periksa koneksi internet.');
+  } finally {
+    showNoregLoading(false);
+  }
+}
+
+function showNoregLoading(show) {
+  document.getElementById('noregSpinner').style.display = show ? 'block' : 'none';
+  document.getElementById('noregCheck').style.display   = 'none';
+}
+
+function setNoregStatus(type, html) {
+  const el = document.getElementById('noregStatus');
+  el.className = 'noreg-status' + (type ? ' '+type : '');
+  el.innerHTML = html;
+  el.style.display = html ? 'block' : 'none';
+}
+
+function showIdentity(nama, sec, noreg) {
+  document.getElementById('idName').textContent    = nama;
+  document.getElementById('idSection').textContent = sec;
+  document.getElementById('idNoreg').textContent   = 'Noreg: ' + noreg;
+  document.getElementById('namaKonfirmasi').textContent = nama;
+  document.getElementById('identityCard').classList.add('show');
+}
+
+function hideIdentity() {
+  document.getElementById('identityCard').classList.remove('show');
+}
+
+function showFormDetail(show) {
+  document.getElementById('formDetail').classList.toggle('hidden', !show);
+}
+
+function prefillExisting(d) {
+  if(d.noHp) document.getElementById('noHp').value = d.noHp;
+  if(d.voteTanggal) {
+    const map = {'16-17 Agustus 2026':'d1','19-20 September 2026':'d2','26-27 September 2026':'d3'};
+    const key = map[d.voteTanggal];
+    if(key) pilihTanggal(d.voteTanggal, key, Object.values(map).filter(v=>v!==key));
+  }
+  if(d.transportasi) {
+    if(d.transportasi.includes('Bus')) pilihTransport('Ikut Bus Panitia','tBus','tMobil','active-blue');
+    else pilihTransport('Kendaraan Sendiri','tMobil','tBus','active-red');
+  }
+  if(d.konfirmasi === 'Tidak') pilihIkut('Tidak');
+  else if(d.konfirmasi === 'Ya') pilihIkut('Ya');
+}
+
+// ── IKUT / TIDAK ──────────────────────────────────────────────────
+function pilihIkut(val) {
+  statusIkut = val;
+  const btnIkut  = document.getElementById('btnIkut');
+  const btnTidak = document.getElementById('btnTidak');
+  btnIkut.className  = 'tbtn' + (val==='Ya' ? ' active-green' : '');
+  btnTidak.className = 'tbtn' + (val==='Tidak' ? ' active-red' : '');
+  document.getElementById('formIkut').classList.toggle('hidden', val !== 'Ya');
+  document.getElementById('wrapTidak').classList.toggle('hidden', val !== 'Tidak');
+  document.getElementById('errIkut').style.display = 'none';
+  updateSummary();
+}
+
+// ── TANGGAL ───────────────────────────────────────────────────────
+function pilihTanggal(val, on, offs) {
+  state.tanggal = val;
+  document.getElementById(on).classList.add('active');
+  offs.forEach(o => document.getElementById(o).classList.remove('active'));
+  document.getElementById('errTanggal').style.display = 'none';
+  updateSummary();
+}
+
+// ── KEHADIRAN ─────────────────────────────────────────────────────
+function onKehadiranChange() {
+  state.kehadiran = document.getElementById('tipeKehadiran').value;
+  const bawa = state.kehadiran === 'Bawa Keluarga';
+  document.getElementById('sectionKeluarga').classList.toggle('hidden', !bawa);
+  if(!bawa){ state.jumlahIstri=0; state.jumlahAnak=0; state.anak=[]; renderIstri(); buildAnakList(); }
+  document.getElementById('errKehadiran').style.display = 'none';
+  updateSummary();
+}
+
+function ubahIstri(d) {
+  state.jumlahIstri = Math.max(0, Math.min(1, state.jumlahIstri+d));
+  renderIstri(); updateSummary();
+}
+function renderIstri() {
+  document.getElementById('valIstri').textContent = state.jumlahIstri;
+  document.getElementById('inputIstri').classList.toggle('hidden', state.jumlahIstri===0);
+}
+function ubahAnak(d) {
+  const n = Math.max(0, Math.min(8, state.jumlahAnak+d));
+  state.jumlahAnak = n;
+  state.anak = Array.from({length:n}, (_,i) => state.anak[i]||{nama:'',usia:''});
+  document.getElementById('valAnak').textContent = n;
+  buildAnakList(); updateSummary();
+}
+function buildAnakList() {
+  const w = document.getElementById('anakList');
+  w.innerHTML = state.anak.map((a,i) => `
+    <div class="anak-item">
+      <div class="anak-item-title">Anak ke-${i+1}</div>
+      <div class="anak-row">
+        <input class="f-input" type="text" placeholder="Nama anak" value="${a.nama}"
+          oninput="state.anak[${i}].nama=this.value;updateSummary()" style="margin-bottom:0">
+        <input class="f-input" type="number" placeholder="Usia" min="0" max="25" value="${a.usia}"
+          oninput="state.anak[${i}].usia=this.value;updateSummary()" style="margin-bottom:0">
+      </div>
+    </div>`).join('');
+}
+
+// ── TRANSPORT & KAOS ──────────────────────────────────────────────
+function pilihTransport(val, on, off, cls) {
+  state.transport = val;
+  document.getElementById(on).className = 'tbtn ' + cls;
+  document.getElementById(off).className = 'tbtn';
+  document.getElementById('errTransport').style.display = 'none';
+  updateSummary();
+}
+function pilihLengan(val, on, off) {
+  state.lengan = val;
+  document.getElementById(on).className = 'tbtn active-green';
+  document.getElementById(off).className = 'tbtn';
+  document.getElementById('errLengan').style.display = 'none';
+  updateSummary();
+}
+
+// ── SIZE BUTTONS ──────────────────────────────────────────────────
+(function buildSizes() {
+  const w = document.getElementById('sizeRow');
+  w.innerHTML = SIZES.map(s => `
+    <div class="sbtn${state.ukuran===s?' active':''}" onclick="pilihSize('${s}')">${s}</div>`).join('');
+})();
+
+function pilihSize(s) {
+  state.ukuran = s;
+  document.querySelectorAll('.sbtn').forEach(el => {
+    el.classList.toggle('active', el.textContent===s);
+  });
+  document.getElementById('errSize').style.display = 'none';
+  updateSummary();
+}
+
+// ── SUMMARY ───────────────────────────────────────────────────────
+function updateSummary() {
+  const el   = document.getElementById('summaryCard');
+  const nama = currentKaryawan?.nama || '';
+  if(!nama || !state.tanggal) { el.style.display='none'; return; }
+  el.style.display = 'block';
+  const total = 1 + state.jumlahIstri + state.jumlahAnak;
+  el.innerHTML = `
+    📋 <strong>Ringkasan:</strong><br>
+    ${nama ? `👤 ${nama}<br>` : ''}
+    ${state.tanggal ? `📅 <span class="s-val">${state.tanggal}</span><br>` : ''}
+    ${state.kehadiran ? `🎫 ${state.kehadiran}${total>1?' — <span class="s-val">'+total+' orang</span>':''}<br>` : ''}
+    ${state.transport ? `🚗 ${state.transport}<br>` : ''}
+    ${state.ukuran ? `👕 ${state.lengan} / Size <span class="s-val">${state.ukuran}</span>` : ''}`;
+}
+
+// ── VALIDASI & BUKA MODAL ─────────────────────────────────────────
+function bukaModalIkut() {
+  const nama = currentKaryawan?.nama || '';
+  const noHp = document.getElementById('noHp').value.trim();
+  const dept = currentKaryawan?.section || '';
+
+  const checks = {
+    'errNoHp'     : !!noHp,
+    'errTanggal'  : !!state.tanggal,
+    'errKehadiran': !!state.kehadiran,
+    'errTransport': !!state.transport,
+    'errLengan'   : !!state.lengan,
+    'errSize'     : !!state.ukuran
+  };
+  const labels = {
+    'errNoHp':'No. HP','errTanggal':'Pilihan Tanggal',
+    'errKehadiran':'Tipe Kehadiran','errTransport':'Transportasi',
+    'errLengan':'Model Lengan','errSize':'Ukuran Kaos'
+  };
+
+  const missing = [];
+  let ok = true;
+  Object.entries(checks).forEach(([id, valid]) => {
+    document.getElementById(id).style.display = valid ? 'none' : 'block';
+    if(!valid){ missing.push(labels[id]); ok=false; }
+  });
+
+  if(!ok) {
+    const box = document.getElementById('missingBox');
+    box.style.display = 'block';
+    box.innerHTML = `<strong style="color:#f04f6a">⚠️ Lengkapi data berikut:</strong><br>` +
+      missing.map(m=>`• ${m}`).join('<br>');
+    box.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  document.getElementById('missingBox').style.display = 'none';
+
+  const total = 1 + state.jumlahIstri + state.jumlahAnak;
+  const namaIstri = document.getElementById('namaIstri')?.value || '-';
+  const catatan   = document.getElementById('catatan').value;
+
+  let keluargaDetail = state.kehadiran;
+  if(state.kehadiran === 'Bawa Keluarga') {
+    keluargaDetail = `Bawa Keluarga — <strong>${total} orang</strong>`;
+    if(state.jumlahIstri > 0) keluargaDetail += `<br><small>Istri: ${namaIstri}</small>`;
+    state.anak.forEach((a,i) => {
+      keluargaDetail += `<br><small>Anak ${i+1}: ${a.nama||'?'} (${a.usia||'?'} th)</small>`;
+    });
+  }
+
+  document.getElementById('modalIkutBody').innerHTML = [
+    ['👤','Karyawan',`${nama}<br><small style="opacity:.5">${dept}</small>`],
+    ['📅','Tanggal Tour',`<span style="color:#f5a52a">${state.tanggal}</span>`],
+    ['🎫','Kehadiran',keluargaDetail],
+    ['🚗','Transportasi',`<span style="color:#93c5fd">${state.transport}</span>`],
+    ['👕','Kaos',`<span style="color:var(--teal)">${state.lengan} / Size ${state.ukuran}</span>`],
+    ['📱','No. HP',noHp],
+    ...(catatan ? [['📝','Catatan',catatan]] : [])
+  ].map(([emoji,label,val])=>`
+    <div class="modal-row">
+      <span class="mr-emoji">${emoji}</span>
+      <div><div class="mr-label">${label}</div><div class="mr-val">${val}</div></div>
+    </div>`).join('');
+
+  document.getElementById('modalIkut').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function bukaModalTidak() {
+  const nama = currentKaryawan?.nama || '';
+  const dept = currentKaryawan?.section || '';
+  if(!nama) { alert('Noreg dan nama wajib terisi.'); return; }
+
+  document.getElementById('modalTidakBody').innerHTML = `
+    <div class="modal-row">
+      <span class="mr-emoji">👤</span>
+      <div><div class="mr-label">Karyawan</div><div class="mr-val">${nama}<br><small style="opacity:.5">${dept}</small></div></div>
+    </div>
+    <div class="modal-row">
+      <span class="mr-emoji">❌</span>
+      <div><div class="mr-label">Status</div><div class="mr-val" style="color:#fda4af">Tidak Ikut Tour</div></div>
+    </div>
+    <div style="margin-top:12px;padding:11px 13px;background:rgba(240,79,106,0.06);border:1px solid rgba(240,79,106,0.15);border-radius:10px;font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6">
+      Data ketidakhadiran Anda akan tercatat. Panitia akan memproses lebih lanjut.
+    </div>`;
+
+  document.getElementById('modalTidak').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModalIkut(e) {
+  if(e && e.target !== document.getElementById('modalIkut')) return;
+  document.getElementById('modalIkut').classList.remove('show');
+  document.body.style.overflow = '';
+}
+function closeModalTidak(e) {
+  if(e && e.target !== document.getElementById('modalTidak')) return;
+  document.getElementById('modalTidak').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────────
+async function doSubmitIkut() {
+  const btn = document.getElementById('btnConfirmIkut');
+  btn.disabled = true; btn.textContent = 'Mengirim... ⏳';
+
+  const noreg    = currentKaryawan?.noreg || document.getElementById('noreg').value;
+  const nama     = currentKaryawan?.nama  || '';
+  const section  = currentKaryawan?.section || '';
+  const noHp     = document.getElementById('noHp').value.trim();
+  const catatan  = document.getElementById('catatan').value.trim();
+  const namaIstri= document.getElementById('namaIstri')?.value || '';
+  const total    = 1 + state.jumlahIstri + state.jumlahAnak;
+
+  const payload = {
+    action      : 'saveParticipant',
+    noreg, nama, section, noHp, catatan,
+    kehadiran   : state.kehadiran,
+    namaIstri,
+    paxDewasa   : 1 + state.jumlahIstri,
+    paxAnak     : state.jumlahAnak,
+    totalPax    : total,
+    anak        : state.anak,
+    transportasi: state.transport,
+    modelLengan : state.lengan,
+    ukuranKaos  : state.ukuran,
+    voteTanggal : state.tanggal,
+    konfirmasi  : 'Ya'
+  };
+
+  try {
+    await fetch(GAS_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(payload)
+    });
+    closeModalIkut();
+    const noticeEl = document.getElementById('notice-header');
+    if(noticeEl) noticeEl.innerHTML = '🙏 Terima kasih telah berpartisipasi! Data Anda telah tersimpan.';
+    showSuccess(
+      '✅ Pendaftaran Berhasil!',
+      `Nama: <strong>${nama}</strong><br>
+       Tanggal: <strong style="color:#f5a52a">${state.tanggal}</strong><br>
+       Peserta: <strong>${total} orang</strong><br>
+       Transport: <strong>${state.transport}</strong><br>
+       Kaos: <strong>${state.lengan} / Size ${state.ukuran}</strong>`
+    );
+  } catch(err) {
+    alert('Gagal mengirim. Periksa koneksi internet.');
+    btn.disabled = false; btn.textContent = '✅ Ya, Daftarkan!';
+  }
+}
+
+async function doSubmitTidak() {
+  const btn = document.getElementById('btnConfirmTidak');
+  btn.disabled = true; btn.textContent = 'Mengirim... ⏳';
+
+  const noreg   = currentKaryawan?.noreg || document.getElementById('noreg').value;
+  const nama    = currentKaryawan?.nama  || '';
+  const section = currentKaryawan?.section || '';
+
+  const payload = {
+    action:'saveParticipant', noreg, nama, section,
+    konfirmasi:'Tidak', paxDewasa:0, paxAnak:0, totalPax:0
+  };
+
+  try {
+    await fetch(GAS_URL, {
+      method:'POST', mode:'no-cors',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify(payload)
+    });
+    closeModalTidak();
+    const noticeEl = document.getElementById('notice-header');
+    if(noticeEl) noticeEl.innerHTML = '🙏 Terima kasih sudah konfirmasi. Data Anda telah tercatat.';
+    showSuccess(
+      '✅ Konfirmasi Tersimpan',
+      `Nama: <strong>${nama}</strong><br>
+       Status: <strong style="color:#fda4af">Tidak Ikut Tour</strong><br>
+       <span style="opacity:.7">Terima kasih sudah konfirmasi 🙏</span>`
+    );
+  } catch(err) {
+    alert('Gagal mengirim. Periksa koneksi internet.');
+    btn.disabled = false; btn.textContent = '✅ Ya, Konfirmasi';
+  }
+}
+
+// ── SUCCESS & RESET ───────────────────────────────────────────────
+function showSuccess(title, sub) {
+  document.getElementById('successTitle').textContent = title.replace(/^✅ /, '');
+  document.getElementById('successTitle').innerHTML   = title;
+  document.getElementById('successSub').innerHTML     = sub;
+  document.getElementById('mainForm').style.display   = 'none';
+  document.getElementById('successScreen').classList.add('show');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function resetForm() {
+  currentKaryawan = null;
+  statusIkut = '';
+  Object.assign(state, {tanggal:'',kehadiran:'',transport:'',lengan:'',ukuran:'',jumlahIstri:0,jumlahAnak:0,anak:[]});
+
+  document.getElementById('successScreen').classList.remove('show');
+  document.getElementById('mainForm').style.display = '';
+  document.getElementById('noreg').value = '';
+  document.getElementById('noHp').value  = '';
+  document.getElementById('catatan').value = '';
+  document.getElementById('tipeKehadiran').value = '';
+  setNoregStatus('','');
+  hideIdentity();
+  showFormDetail(false);
+  document.getElementById('notice-header').innerHTML =
+    'Anak yang didaftarkan adalah yang <strong>belum menikah</strong>';
+  document.getElementById('btnIkut').className = 'tbtn';
+  document.getElementById('btnTidak').className = 'tbtn';
+  document.getElementById('tBus').className = 'tbtn';
+  document.getElementById('tMobil').className = 'tbtn';
+  document.getElementById('lk1').className = 'tbtn';
+  document.getElementById('lk2').className = 'tbtn';
+  document.querySelectorAll('.sbtn').forEach(el => el.classList.remove('active'));
+  document.getElementById('sectionKeluarga').classList.add('hidden');
+  document.getElementById('formIkut').classList.add('hidden');
+  document.getElementById('wrapTidak').classList.add('hidden');
+  document.querySelectorAll('.date-opt').forEach(el => el.classList.remove('active'));
+  document.getElementById('summaryCard').style.display = 'none';
+  document.getElementById('missingBox').style.display  = 'none';
+  document.getElementById('anakList').innerHTML = '';
+  document.getElementById('valIstri').textContent = '0';
+  document.getElementById('valAnak').textContent  = '0';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+</body>
+</html>
