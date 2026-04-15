@@ -3,689 +3,493 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard Peserta · Tour PPIC &amp; WH 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>TOUR OPS · PPIC & WH 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
-  --bg:#07091a;--bg2:#0d1128;--bg3:#111630;--card:#111727;--card2:#161e36;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
-  --text:#dce5f8;--text2:#7889b2;--text3:#3d4f78;
-  --blue:#4f8ef7;--green:#1fd17a;--red:#f04f6a;--amber:#f5a52a;
-  --teal:#00cdb8;--purple:#9b7ff5;--pink:#f472b6;--orange:#fb923c;
-  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
-  --r:16px;--r2:10px
+  --void:#020408;--deep:#050c14;--panel:#081018;--surface:#0c1620;--lift:#101e2c;
+  --rim:rgba(0,200,255,0.08);--rim2:rgba(0,200,255,0.18);
+  --cyan:#00c8ff;--cyan2:#00e5ff;--amber:#ffb020;--green:#00ff88;
+  --red:#ff3d5a;--purple:#b06eff;--muted:rgba(180,220,255,0.35);
+  --ghost:rgba(180,220,255,0.12);--text:#c8dff0;
+  --mono:'Space Mono',monospace;--body:'Space Grotesk',sans-serif;
 }
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;min-height:100vh}
-::-webkit-scrollbar{width:4px;height:4px}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+body{background:var(--void);color:var(--text);font-family:var(--body);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:1000}
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse 60% 40% at 15% 20%,rgba(0,200,255,0.05),transparent 60%),radial-gradient(ellipse 50% 35% at 85% 75%,rgba(176,110,255,0.04),transparent 60%)}
+.shell{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:0 14px 60px}
 
-/* BG GLOW */
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(79,142,247,0.08),transparent),radial-gradient(ellipse 50% 40% at 90% 90%,rgba(155,127,245,0.06),transparent);pointer-events:none;z-index:0}
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 0 0;border-bottom:1px solid var(--rim2);margin-bottom:22px;position:relative}
+.topbar::after{content:'';position:absolute;bottom:-1px;left:0;width:140px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+.tb-brand{padding-bottom:12px}
+.tb-eye{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;opacity:.7;margin-bottom:4px}
+.tb-title{font-family:var(--mono);font-size:17px;font-weight:700;color:#fff;letter-spacing:-.5px;line-height:1}
+.tb-title span{color:var(--cyan)}
+.tb-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;padding-bottom:12px}
+.live-badge{display:flex;align-items:center;gap:6px;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);border-radius:4px;padding:4px 10px;font-family:var(--mono);font-size:9px;color:var(--green);letter-spacing:1.5px;text-transform:uppercase}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 1.8s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.btn-reload{font-family:var(--mono);font-size:10px;letter-spacing:1px;color:var(--cyan);background:var(--rim);border:1px solid var(--rim2);border-radius:4px;padding:5px 12px;cursor:pointer;transition:all .2s;text-transform:uppercase}
+.btn-reload:hover{background:rgba(0,200,255,0.14);border-color:var(--cyan)}
+.sync-txt{font-family:var(--mono);font-size:9px;color:var(--ghost)}
 
-.app{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:16px 14px 60px}
+/* SEC LABEL */
+.sec-lbl{font-family:var(--mono);font-size:9px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;display:flex;align-items:center;gap:12px;margin:20px 0 10px}
+.sec-lbl::before{content:'//';color:var(--cyan);opacity:.5}
+.sec-lbl::after{content:'';flex:1;height:1px;background:var(--rim2)}
 
-/* ── HEADER ── */
-.hdr{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px;padding-top:8px}
-.hdr-left .hdr-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(31,209,122,0.1);border:1px solid rgba(31,209,122,0.2);border-radius:20px;padding:3px 12px;font-size:9px;font-weight:600;color:var(--green);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px}
-.hdr-left .hdr-chip .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
-.hdr-title{font-size:20px;font-weight:700;line-height:1.2;margin-bottom:4px}
-.hdr-title span{background:linear-gradient(135deg,#f7c948,#f04f6a,#9b7ff5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hdr-sub{font-size:11px;color:var(--text3)}
-.hdr-right{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex-shrink:0}
-.btn-refresh{background:rgba(79,142,247,0.12);border:1px solid rgba(79,142,247,0.25);color:var(--blue);padding:8px 16px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);white-space:nowrap;transition:all .15s}
-.btn-refresh:active{opacity:.8}
-.last-sync{font-size:10px;color:var(--text3);font-family:var(--mono);text-align:right}
+/* ALERTS */
+.alert-s{padding:9px 14px;border-radius:4px;font-size:12px;font-family:var(--mono);margin-bottom:7px;display:flex;align-items:flex-start;gap:10px;animation:rise .4s ease both}
+.alert-s:last-child{margin-bottom:0}
+.al-r{background:rgba(255,61,90,0.07);border:1px solid rgba(255,61,90,0.22);color:#ff8fa0}
+.al-a{background:rgba(255,176,32,0.07);border:1px solid rgba(255,176,32,0.22);color:#ffd080}
+.al-g{background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.2);color:#80ffbb}
+.al-c{background:rgba(0,200,255,0.07);border:1px solid rgba(0,200,255,0.18);color:#80e8ff}
+.al-b{font-weight:700;margin-right:4px}
 
-/* ── ALERT ── */
-.alert{display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border-radius:var(--r2);margin-bottom:8px;font-size:12px;line-height:1.5}
-.alert-icon{font-size:14px;flex-shrink:0;margin-top:1px}
-.alert-red{background:rgba(240,79,106,0.08);border:1px solid rgba(240,79,106,0.2)}
-.alert-amber{background:rgba(245,165,42,0.08);border:1px solid rgba(245,165,42,0.2)}
-.alert-green{background:rgba(31,209,122,0.08);border:1px solid rgba(31,209,122,0.2)}
-.alert-blue{background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.2)}
-.at{font-weight:700;margin-right:3px}
-.alert-red .at{color:var(--red)}.alert-amber .at{color:var(--amber)}
-.alert-green .at{color:var(--green)}.alert-blue .at{color:var(--blue)}
+/* CMD CENTER */
+.cmd{background:var(--panel);border:1px solid var(--rim2);border-radius:8px;overflow:hidden;margin-bottom:10px;position:relative}
+.cmd::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--cyan),var(--purple),transparent)}
+.cmd-top{display:flex;align-items:stretch}
+.cmd-ring{flex:0 0 120px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 10px;border-right:1px solid var(--rim)}
+.ring-eyebrow{font-family:var(--mono);font-size:8px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.ring-bot{font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:6px}
+.ring-bot span{color:var(--cyan)}
+.vitals{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr}
+.vital{padding:16px 14px;border-right:1px solid var(--rim);display:flex;flex-direction:column;gap:3px;cursor:pointer;transition:background .15s;position:relative;overflow:hidden}
+.vital:last-child{border-right:none}
+.vital:hover{background:rgba(0,200,255,0.04)}
+.vital.active{background:rgba(0,200,255,0.07)}
+.vital.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--cyan)}
+.v-eye{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}
+.v-num{font-family:var(--mono);font-size:26px;font-weight:700;line-height:1}
+.v-sub{font-size:10px;color:var(--muted)}
+.v-arr{position:absolute;bottom:5px;right:7px;font-size:7px;color:var(--ghost)}
+.vc .v-num{color:var(--cyan)} .va .v-num{color:var(--amber)} .vr .v-num{color:var(--red)} .vg .v-num{color:var(--green)} .vp .v-num{color:var(--purple)}
 
-/* ── SECTION DIVIDER ── */
-.sec{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:10px;margin:18px 0 10px}
-.sec::before,.sec::after{content:'';flex:1;height:1px;background:var(--border)}
+/* PROGRESS BAR */
+.cmd-bar{display:flex;align-items:center;gap:14px;padding:12px 18px;border-top:1px solid var(--rim)}
+.bar-wrap{flex:1}
+.bar-labels{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--muted);margin-bottom:5px}
+.bar-track{height:5px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden;position:relative}
+.bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#004466,var(--cyan));transition:width .9s cubic-bezier(.4,0,.2,1);position:relative}
+.bar-fill::after{content:'';position:absolute;right:0;top:-1px;bottom:-1px;width:3px;background:white;box-shadow:0 0 8px var(--cyan)}
+.cmd-pct{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--cyan);line-height:1;flex-shrink:0;text-shadow:0 0 20px rgba(0,200,255,.4)}
+.cmd-pct small{font-size:14px;color:var(--muted)}
 
-/* ── CARD ── */
-.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
-.card.c-green::before{background:linear-gradient(90deg,var(--green),transparent)}
-.card.c-blue::before{background:linear-gradient(90deg,var(--blue),transparent)}
-.card.c-amber::before{background:linear-gradient(90deg,var(--amber),transparent)}
-.card.c-purple::before{background:linear-gradient(90deg,var(--purple),transparent)}
-.card.c-teal::before{background:linear-gradient(90deg,var(--teal),transparent)}
-.card.c-red::before{background:linear-gradient(90deg,var(--red),transparent)}
-.card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-.card-title{font-size:12px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px}
-.card-sub{font-size:11px;color:var(--text3)}
+.cmd-pills{display:flex;gap:6px;flex-wrap:wrap;padding:10px 18px;border-top:1px solid var(--rim)}
+.pill{font-family:var(--mono);font-size:9px;letter-spacing:.5px;padding:3px 9px;border-radius:3px;text-transform:uppercase;font-weight:700}
+.pg{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green)}
+.pr{background:rgba(255,61,90,.08);border:1px solid rgba(255,61,90,.2);color:var(--red)}
+.pa{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.2);color:var(--amber)}
+.pc{background:rgba(0,200,255,.08);border:1px solid rgba(0,200,255,.2);color:var(--cyan)}
+.pp{background:var(--ghost);border:1px solid rgba(255,255,255,.07);color:var(--muted)}
 
-/* ── HERO RING + STATS ── */
-.hero-wrap{display:flex;gap:12px;align-items:stretch}
-.ring-box{flex:0 0 100px;background:rgba(31,209,122,0.06);border:1px solid rgba(31,209,122,0.15);border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px 8px;gap:4px}
-.ring-pct{font-size:32px;font-weight:700;color:var(--green);line-height:1;font-family:var(--mono)}
-.ring-lbl{font-size:9px;color:var(--text3);font-family:var(--mono)}
-.stats-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.sc{background:var(--card2);border:1px solid var(--border);border-radius:var(--r2);padding:11px 8px;text-align:center;cursor:pointer;transition:all .15s;position:relative}
-.sc:active{transform:scale(.96)}
-.sc.active{border-color:white;background:rgba(255,255,255,0.06)}
-.sc-num{font-size:22px;font-weight:700;line-height:1;margin-bottom:3px;font-family:var(--mono)}
-.sc-lbl{font-size:8px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);line-height:1.3}
-.sc-arr{position:absolute;bottom:3px;right:5px;font-size:7px;color:var(--text3)}
+/* DRILL */
+.drill{max-height:0;overflow:hidden;transition:max-height .4s cubic-bezier(.4,0,.2,1),opacity .3s;opacity:0}
+.drill.open{max-height:600px;opacity:1;margin-bottom:8px}
+.drill-in{background:var(--surface);border:1px solid var(--rim2);border-radius:6px;margin:8px 0 0}
+.drill-hdr{display:flex;justify-content:space-between;align-items:center;padding:10px 15px;border-bottom:1px solid var(--rim);font-family:var(--mono);font-size:11px;font-weight:700}
+.drill-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}
+.drill-body{padding:13px 15px}
 
-/* ── DRILL PANEL ── */
-.drill{overflow:hidden;max-height:0;transition:max-height .35s ease,opacity .3s;opacity:0}
-.drill.open{max-height:700px;opacity:1}
-.drill-inner{background:var(--card2);border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-top:10px}
-.drill-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-.drill-title{font-size:13px;font-weight:700}
-.drill-close{background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1}
+/* STATUS TRIO */
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:10px}
+.st{background:var(--panel);border:1px solid var(--rim);border-radius:6px;padding:13px 10px;text-align:center;position:relative;overflow:hidden}
+.st-bar{position:absolute;bottom:0;left:0;height:3px;border-radius:2px}
+.st-n{font-family:var(--mono);font-size:24px;font-weight:700;line-height:1}
+.st-l{font-family:var(--mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.st-p{font-family:var(--mono);font-size:10px;font-weight:700;margin-top:2px}
+.stg .st-n,.stg .st-p{color:var(--green)} .stg .st-bar{background:var(--green)}
+.sta .st-n,.sta .st-p{color:var(--amber)} .sta .st-bar{background:var(--amber)}
+.str .st-n,.str .st-p{color:var(--red)}   .str .st-bar{background:var(--red)}
 
-/* ── PROGRESS BAR ── */
-.bar-wrap{margin-bottom:9px}
-.bar-wrap:last-child{margin-bottom:0}
-.bar-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;gap:8px}
-.bl{font-size:12px;color:var(--text2);flex:1;line-height:1.4}
-.bv{font-size:12px;font-weight:700;white-space:nowrap;font-family:var(--mono)}
-.bar-track{background:rgba(255,255,255,0.06);border-radius:4px;height:6px;overflow:hidden}
-.bar-fill{height:100%;border-radius:4px;transition:width .7s cubic-bezier(.4,0,.2,1)}
+/* PANEL */
+.panel{background:var(--panel);border:1px solid var(--rim);border-radius:8px;overflow:hidden;margin-bottom:10px}
+.p-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 15px;border-bottom:1px solid var(--rim)}
+.p-title{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text);letter-spacing:.4px}
+.p-sub{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.p-body{padding:13px 15px}
+.p-body.np{padding:0}
 
-/* ── STATUS BANDS ── */
-.status-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
-.sb{border-radius:var(--r2);padding:13px 10px;text-align:center;position:relative;overflow:hidden}
-.sb-bar{position:absolute;bottom:0;left:0;height:3px;border-radius:2px}
-.sb-num{font-size:24px;font-weight:700;line-height:1;font-family:var(--mono)}
-.sb-lbl{font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-top:3px}
-.sb-pct{font-size:10px;font-weight:600;margin-top:2px;font-family:var(--mono)}
-.sb-g{background:rgba(31,209,122,0.09);border:1px solid rgba(31,209,122,0.18)}.sb-g .sb-num,.sb-g .sb-pct{color:var(--green)}.sb-g .sb-bar{background:var(--green)}
-.sb-a{background:rgba(245,165,42,0.09);border:1px solid rgba(245,165,42,0.18)}.sb-a .sb-num,.sb-a .sb-pct{color:var(--amber)}.sb-a .sb-bar{background:var(--amber)}
-.sb-r{background:rgba(240,79,106,0.09);border:1px solid rgba(240,79,106,0.18)}.sb-r .sb-num,.sb-r .sb-pct{color:var(--red)}.sb-r .sb-bar{background:var(--red)}
+/* BAR ROW */
+.br{margin-bottom:10px}
+.br:last-child{margin-bottom:0}
+.br-meta{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;gap:10px}
+.br-n{font-size:12px;color:var(--text);flex:1;line-height:1.4}
+.br-v{font-family:var(--mono);font-size:11px;font-weight:700;white-space:nowrap}
+.br-track{height:4px;background:rgba(255,255,255,0.04);border-radius:2px;overflow:hidden}
+.br-fill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
 
-/* ── MINI GRID ── */
-.mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.mini-grid.g3{grid-template-columns:1fr 1fr 1fr}
-.mc{border-radius:var(--r2);padding:11px;text-align:center}
-.mc-num{font-size:20px;font-weight:700;line-height:1;font-family:var(--mono)}
-.mc-lbl{font-size:9px;color:rgba(255,255,255,0.4);margin-top:3px;line-height:1.4}
-
-/* CHART */
-.chart-wrap{position:relative;height:200px}
-
-/* TOP 3 TANGGAL */
-.tgl-cards{display:flex;flex-direction:column;gap:8px}
-.tgl-card{display:flex;align-items:center;gap:12px;padding:12px 14px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--r2)}
-.tgl-rank{font-size:22px;font-weight:700;color:var(--text3);min-width:28px;font-family:var(--mono)}
-.tgl-rank.r1{color:var(--amber)} .tgl-rank.r2{color:var(--text2)} .tgl-rank.r3{color:var(--orange)}
+/* TOP 3 */
+.tgl-list{display:flex;flex-direction:column;gap:7px}
+.tgl-row{display:flex;align-items:center;gap:13px;padding:11px 13px;background:var(--surface);border:1px solid var(--rim);border-radius:6px}
+.tgl-row:first-child{border-color:rgba(255,176,32,.3)}
+.tgl-rank{font-family:var(--mono);font-size:18px;font-weight:700;min-width:24px;color:var(--muted)}
+.tgl-row:nth-child(1) .tgl-rank{color:var(--amber);text-shadow:0 0 12px rgba(255,176,32,.4)}
+.tgl-row:nth-child(2) .tgl-rank{color:rgba(180,220,255,.5)}
+.tgl-row:nth-child(3) .tgl-rank{color:rgba(251,146,60,.5)}
 .tgl-info{flex:1}
 .tgl-name{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
-.tgl-bar-track{background:rgba(255,255,255,0.06);border-radius:3px;height:4px;overflow:hidden}
-.tgl-bar-fill{height:100%;border-radius:3px;transition:width .7s}
-.tgl-count{font-size:14px;font-weight:700;font-family:var(--mono);flex-shrink:0}
+.tgl-row:first-child .tgl-name{color:var(--amber)}
+.tgl-btrack{height:3px;background:rgba(255,255,255,0.05);border-radius:2px;overflow:hidden}
+.tgl-bfill{height:100%;border-radius:2px}
+.tgl-c{font-family:var(--mono);font-size:15px;font-weight:700;flex-shrink:0}
 
-/* BADGE */
-.badge{display:inline-block;padding:2px 8px;border-radius:5px;font-size:10px;font-weight:600;font-family:var(--mono)}
-.bdg-g{background:rgba(31,209,122,0.1);color:var(--green)}
-.bdg-r{background:rgba(240,79,106,0.1);color:var(--red)}
-.bdg-a{background:rgba(245,165,42,0.1);color:var(--amber)}
-.bdg-b{background:rgba(79,142,247,0.1);color:var(--blue)}
-.bdg-p{background:rgba(155,127,245,0.1);color:var(--purple)}
+/* LOGISTIK */
+.logi{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px}
+.logi-c{background:var(--surface);border:1px solid var(--rim);border-radius:5px;padding:11px 9px;text-align:center}
+.logi-n{font-family:var(--mono);font-size:22px;font-weight:700;line-height:1}
+.logi-l{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-top:3px;line-height:1.4}
 
-/* FILTER & TABLE */
+/* BUS VIS */
+.bus-vis{display:flex;flex-direction:column;gap:6px}
+.bus-item{display:flex;align-items:center;gap:10px;padding:7px 11px;background:var(--surface);border:1px solid var(--rim);border-radius:4px}
+.bus-lbl{font-family:var(--mono);font-size:10px;color:var(--cyan);min-width:46px}
+.bus-track{flex:1;height:7px;background:rgba(0,200,255,0.06);border-radius:3px;overflow:hidden}
+.bus-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#003a55,var(--cyan));transition:width .8s ease}
+.bus-cnt{font-family:var(--mono);font-size:10px;color:var(--muted);min-width:36px;text-align:right}
+
+/* FILTER TABLE */
 .filter-row{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
-.f-input{background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);padding:8px 12px;color:var(--text);font-family:var(--font);font-size:12px;outline:none;flex:1;min-width:120px}
-.f-input:focus{border-color:var(--blue)}
-.f-input::placeholder{color:var(--text3)}
-select.f-input{cursor:pointer}
+.fi{background:var(--surface);border:1px solid var(--rim2);border-radius:5px;padding:8px 11px;color:var(--text);font-family:var(--body);font-size:12px;outline:none;flex:1;min-width:120px}
+.fi:focus{border-color:var(--cyan)}
+.fi::placeholder{color:var(--muted)}
+select.fi{cursor:pointer;background:var(--surface)}
 .tbl-wrap{overflow-x:auto}
-.tbl{width:100%;border-collapse:collapse;font-size:12px}
-.tbl th{padding:9px 12px;text-align:left;color:var(--text3);font-weight:500;font-size:10px;letter-spacing:.3px;text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--bg3);white-space:nowrap;font-family:var(--font)}
-.tbl td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.03);color:var(--text2);vertical-align:middle}
-.tbl tr:hover td{background:rgba(255,255,255,0.015)}
+table.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{padding:8px 12px;text-align:left;font-family:var(--mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--rim2);background:var(--deep);white-space:nowrap}
+.tbl td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,0.03);color:rgba(200,223,240,.7);vertical-align:middle}
+.tbl tr:hover td{background:rgba(0,200,255,0.03)}
 .tbl td.bold{color:var(--text);font-weight:600}
-.tbl td.mono{font-family:var(--mono);font-size:11px}
+.tbl td.mono{font-family:var(--mono);font-size:10px}
 .tbl td.r{text-align:right}
-.tbl-empty{padding:32px;text-align:center;color:var(--text3);font-style:italic}
+.tbl-empty{padding:28px;text-align:center;color:var(--muted);font-size:11px;font-style:italic}
+.bdg{display:inline-block;padding:2px 7px;border-radius:3px;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.bg{background:rgba(0,255,136,.08);border:1px solid rgba(0,255,136,.2);color:var(--green)}
+.br2{background:rgba(255,61,90,.08);border:1px solid rgba(255,61,90,.2);color:var(--red)}
+.ba{background:rgba(255,176,32,.08);border:1px solid rgba(255,176,32,.2);color:var(--amber)}
 
-/* LOADING */
-.loading{text-align:center;padding:80px 20px;color:var(--text3)}
-.spinner{width:32px;height:32px;border:2.5px solid var(--border2);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.divider{height:1px;background:var(--border);margin:12px 0}
-.empty{text-align:center;color:var(--text3);font-size:11px;padding:16px;font-style:italic}
+/* CHART */
+.chart-wrap{position:relative;height:190px}
 
-/* PILL */
-.pill{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:600;display:inline-flex;align-items:center;gap:4px}
-.pill-g{background:rgba(31,209,122,0.1);border:1px solid rgba(31,209,122,0.2);color:var(--green)}
-.pill-r{background:rgba(240,79,106,0.1);border:1px solid rgba(240,79,106,0.2);color:var(--red)}
-.pill-a{background:rgba(245,165,42,0.1);border:1px solid rgba(245,165,42,0.2);color:var(--amber)}
+/* MINI GRID */
+.mg2{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.mg3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}
+.mc{background:var(--surface);border:1px solid var(--rim);border-radius:5px;padding:10px;text-align:center}
+.mc-n{font-family:var(--mono);font-size:20px;font-weight:700;line-height:1}
+.mc-l{font-family:var(--mono);font-size:8px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-top:3px;line-height:1.4}
+
+/* LEG */
+.leg{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.leg:last-child{margin-bottom:0}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.leg-n{font-size:12px;color:var(--text);flex:1}
+.leg-v{font-family:var(--mono);font-size:12px;font-weight:700}
+.leg-p{font-family:var(--mono);font-size:10px;color:var(--muted);margin-left:4px}
+
+/* MISC */
+.divider{height:1px;background:var(--rim);margin:11px 0}
+.loading{text-align:center;padding:80px 20px;color:var(--muted)}
+.spin{width:28px;height:28px;margin:0 auto 12px;border:2px solid rgba(0,200,255,.1);border-top-color:var(--cyan);border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.load-txt{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase}
+
+/* STAGGER */
+.sg>*{opacity:0;transform:translateY(8px);animation:rise .4s ease both}
+.sg>*:nth-child(1){animation-delay:.04s}.sg>*:nth-child(2){animation-delay:.09s}
+.sg>*:nth-child(3){animation-delay:.14s}.sg>*:nth-child(4){animation-delay:.19s}
+.sg>*:nth-child(5){animation-delay:.24s}.sg>*:nth-child(6){animation-delay:.29s}
+.sg>*:nth-child(7){animation-delay:.34s}.sg>*:nth-child(8){animation-delay:.39s}
+@keyframes rise{to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="ambient"></div>
+<div class="shell">
 
-  <!-- HEADER -->
-  <div class="hdr">
-    <div class="hdr-left">
-      <div class="hdr-chip"><span class="dot"></span>Live Data</div>
-      <div class="hdr-title">Dashboard<br><span>Tour PPIC &amp; WH 2026</span></div>
-      <div class="hdr-sub">Monitor peserta &amp; kesiapan operasional</div>
+  <div class="topbar">
+    <div class="tb-brand">
+      <div class="tb-eye">Operations Center</div>
+      <div class="tb-title">TOUR<span>_OPS</span> <span style="color:var(--muted);font-size:11px;font-weight:400">/ PPIC &amp; WH 2026</span></div>
     </div>
-    <div class="hdr-right">
-      <button class="btn-refresh" onclick="loadData()">🔄 Refresh</button>
-      <div class="last-sync" id="lastSync">—</div>
+    <div class="tb-right">
+      <div class="live-badge"><span class="live-dot"></span>Live</div>
+      <button class="btn-reload" onclick="loadData()">↻ Sync</button>
+      <div class="sync-txt" id="syncTxt">—</div>
     </div>
   </div>
 
-  <div id="mainContent">
-    <div class="loading"><div class="spinner"></div>Memuat data dari Google Sheets...</div>
+  <div id="root">
+    <div class="loading"><div class="spin"></div><div class="load-txt">Connecting...</div></div>
   </div>
 
 </div>
-
 <script>
-const GAS_URL  = 'https://script.google.com/macros/s/AKfycbw6dArxe_HJ7Ww7p6oxDBvi64kpPixUQ2vMSv7noYuEK3LN5wY7M-e2JbgrtumqONdH/exec';
-const CLR      = ['#4f8ef7','#1fd17a','#f5a52a','#f472b6','#00cdb8','#9b7ff5','#f04f6a','#fb923c'];
+const GAS='https://script.google.com/macros/s/AKfycbw6dArxe_HJ7Ww7p6oxDBvi64kpPixUQ2vMSv7noYuEK3LN5wY7M-e2JbgrtumqONdH/exec';
+const TARGETS={"Dept. Head":1,"CCR & Ordering NR Engine Sec":13,"CCR Plant #2 Prod Indication & Admin Sec":17,"CCR Vehicle Plant #1 Sec":13,"Component Ordering & Inventory Mgt. Sec":8,"Warehouse KRW Plant & Steel Opr Sec":16,"Warehouse Ordering & Engineering Sec":15,"Warehouse Plant #3 Sec":15};
+const CLR=['#00c8ff','#ffb020','#00ff88','#b06eff','#ff3d5a','#00d4b4','#7ecfff','#fb923c'];
+const GRAND=97;
 
-let _data  = null;
-let _drill = '';
-let _rawRows = [];
+let _drill='', _chartBus=null, _rows=[];
 
-// ── DONUT SVG ─────────────────────────────────────────────────────
-function donutSVG(segs, sz=100) {
-  const r=38,cx=50,cy=50,circ=2*Math.PI*r;
-  let off=0, paths='';
-  segs.forEach(s=>{
-    const dash=circ*(s.p/100),gap=circ-dash;
-    paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.c}" stroke-width="11"
-      stroke-dasharray="${dash.toFixed(1)} ${gap.toFixed(1)}"
-      stroke-dashoffset="${(-(off*circ/100)).toFixed(1)}"
-      transform="rotate(-90 ${cx} ${cy})"/>`;
-    off+=s.p;
-  });
-  return `<svg width="${sz}" height="${sz}" viewBox="0 0 100 100">${paths}
-    <text x="50" y="44" text-anchor="middle" fill="white" font-size="15" font-weight="700"
-      font-family="DM Mono,monospace">${segs[0]?.v||''}</text>
-    <text x="50" y="57" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="7.5"
-      font-family="DM Sans,sans-serif">${segs[0]?.s||''}</text>
-  </svg>`;
+const pct=(a,b)=>b>0?Math.round(a/b*100):0;
+const ss=s=>s.replace(/Section|Sec\.?/gi,'').replace(/Plant #(\d)/gi,'P$1').trim().slice(0,22);
+
+function donut(segs,sz=110){
+  const r=38,cx=50,cy=50,c=2*Math.PI*r; let off=0,paths='';
+  segs.forEach(s=>{const d=c*(s.p/100),g=c-d;paths+=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.c}" stroke-width="10" stroke-dasharray="${d.toFixed(1)} ${g.toFixed(1)}" stroke-dashoffset="${(-(off*c/100)).toFixed(1)}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=s.p;});
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 100 100">${paths}<text x="50" y="44" text-anchor="middle" fill="white" font-size="15" font-weight="700" font-family="Space Mono,monospace">${segs[0]?.v||''}</text><text x="50" y="57" text-anchor="middle" fill="rgba(180,220,255,0.35)" font-size="7" font-family="Space Mono,monospace">${segs[0]?.s||''}</text></svg>`;
 }
 
-// ── DRILL TOGGLE ──────────────────────────────────────────────────
-function openDrill(key, html, title, color) {
-  const panel = document.getElementById('drill-'+key);
-  if(!panel) return;
-  if(_drill===key){
-    _drill='';
-    panel.classList.remove('open');
-    document.querySelectorAll('.sc').forEach(c=>c.classList.remove('active'));
-    return;
-  }
+function toggleDrill(key,html,title,color){
+  const panel=document.getElementById('drill-'+key);
+  if(!panel)return;
+  if(_drill===key){_drill='';panel.classList.remove('open');document.querySelectorAll('.vital').forEach(v=>v.classList.remove('active'));return;}
   document.querySelectorAll('.drill').forEach(p=>p.classList.remove('open'));
-  document.querySelectorAll('.sc').forEach(c=>c.classList.remove('active'));
-  _drill = key;
-  panel.classList.add('open');
-  document.getElementById('sc-'+key)?.classList.add('active');
-  document.getElementById('drill-body-'+key).innerHTML = html;
+  document.querySelectorAll('.vital').forEach(v=>v.classList.remove('active'));
+  _drill=key; panel.classList.add('open');
+  document.getElementById('vital-'+key)?.classList.add('active');
+  document.getElementById('drill-body-'+key).innerHTML=decodeURIComponent(html);
+  const t=document.getElementById('drill-ttl-'+key);
+  if(t){t.textContent=title;t.style.color=color;}
   panel.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
-function closeDrill(key){
-  _drill='';
-  document.getElementById('drill-'+key)?.classList.remove('open');
-  document.querySelectorAll('.sc').forEach(c=>c.classList.remove('active'));
-}
+function closeDrill(key){_drill='';document.getElementById('drill-'+key)?.classList.remove('open');document.querySelectorAll('.vital').forEach(v=>v.classList.remove('active'));}
 
-// ── FILTER TABLE ──────────────────────────────────────────────────
-function applyFilter() {
-  const q    = (document.getElementById('searchQ')?.value||'').toLowerCase();
-  const sec  = document.getElementById('filterSec')?.value||'';
-  const stat = document.getElementById('filterStat')?.value||'';
-  const d    = _data;
-  if(!d) return;
-
-  const GRAND = d.targetPax;
-  let rows = [];
-
-  if(stat === 'belum') {
-    rows = (_rawRows.filter(r=>{
-      const noreg = String(r[2]||'').replace(/^0+/,'').trim();
-      return !_data._noregSet.has(noreg);
-    })||[]).filter(r=>{
-      const nm = (r[1]||'').toLowerCase(), s = r[2]||'';
-      const smatch = !sec||s===sec, qmatch = !q||nm.includes(q)||s.toLowerCase().includes(q);
-      return smatch&&qmatch;
-    });
-  } else {
-    rows = _data._allRows.filter(r=>{
-      const nm = (r.nama||'').toLowerCase(), s = r.section||'';
-      const ikut = r.konfirmasi !== 'Tidak';
-      const smatch = !sec||s===sec;
-      const stmatch = !stat||(stat==='ikut'&&ikut)||(stat==='tidak'&&!ikut);
-      const qmatch = !q||nm.includes(q)||s.toLowerCase().includes(q);
-      return smatch&&stmatch&&qmatch;
-    });
-  }
-
-  const tbody   = document.getElementById('tblBody');
-  const counter = document.getElementById('tblCount');
-  if(counter) counter.textContent = rows.length + ' data';
-
-  if(!rows.length){
-    tbody.innerHTML = `<tr><td colspan="5" class="tbl-empty">Tidak ada data</td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = rows.map((r,i)=>{
-    const isIkut = r.konfirmasi !== 'Tidak';
-    const isBelum = r._belum;
-    const nm   = r.nama || r[1] || '—';
-    const sc   = r.section || r[2] || '—';
-    const tgl  = r.voteTanggal || '—';
-    const tr   = r.transportasi || '—';
-    const pax  = r.totalPax || '—';
-    const stBadge = isBelum
-      ? `<span class="badge bdg-a">Belum</span>`
-      : isIkut
-        ? `<span class="badge bdg-g">Ikut</span>`
-        : `<span class="badge bdg-r">Tidak</span>`;
-    return `<tr>
-      <td class="bold">${nm}</td>
-      <td style="font-size:10px;color:var(--text3)">${sc.replace(/Section|Sec\.?/gi,'').replace(/Plant #(\d)/gi,'P$1').trim().slice(0,22)}</td>
-      <td>${stBadge}</td>
-      <td class="mono" style="font-size:10px;color:var(--amber)">${isBelum?'—':tgl.replace('2026','').trim()}</td>
-      <td class="r mono">${isBelum?'—':pax}</td>
-    </tr>`;
+function applyFilter(){
+  const q=(document.getElementById('fQ')?.value||'').toLowerCase();
+  const sec=document.getElementById('fSec')?.value||'';
+  const stat=document.getElementById('fStat')?.value||'';
+  const rows=_rows.filter(r=>{
+    const nm=(r.nama||'').toLowerCase(),sc=r.section||'';
+    const iku=r.ikutTour!=='Tidak', bel=r._belum;
+    return (!sec||sc===sec)&&(!stat||(stat==='ikut'&&iku&&!bel)||(stat==='tidak'&&!iku)||(stat==='belum'&&bel))&&(!q||nm.includes(q)||sc.toLowerCase().includes(q));
+  });
+  const tbody=document.getElementById('tblBody');
+  document.getElementById('tblCount').textContent=rows.length+' rows';
+  if(!rows.length){tbody.innerHTML=`<tr><td colspan="5" class="tbl-empty">No records match</td></tr>`;return;}
+  tbody.innerHTML=rows.map(r=>{
+    const iku=r.ikutTour!=='Tidak',bel=r._belum;
+    const bdg=bel?`<span class="bdg ba">PENDING</span>`:iku?`<span class="bdg bg">CONFIRMED</span>`:`<span class="bdg br2">DECLINED</span>`;
+    return `<tr><td class="bold">${r.nama||'—'}</td><td style="font-size:10px;color:var(--muted)">${ss(r.section||'')}</td><td>${bdg}</td><td class="mono" style="color:var(--amber)">${bel?'—':(r.tanggal||'').replace('2026','').trim()}</td><td class="r mono">${bel?'—':(r.totalPeserta||'')}</td></tr>`;
   }).join('');
 }
 
-// ── LOAD DATA ─────────────────────────────────────────────────────
-async function loadData() {
-  document.getElementById('mainContent').innerHTML =
-    '<div class="loading"><div class="spinner"></div>Memuat data...</div>';
-  try {
-    const res  = await fetch(`${GAS_URL}?action=getSummary`);
-    const json = await res.json();
-    if(json.status !== 'ok') throw new Error(json.message);
-    render(json);
-    document.getElementById('lastSync').textContent =
-      'Sync: ' + new Date().toLocaleTimeString('id-ID');
-  } catch(e) {
-    document.getElementById('mainContent').innerHTML =
-      `<div class="loading">❌ Gagal memuat data.<br><small style="color:var(--text3)">${e.message}</small></div>`;
+async function loadData(){
+  document.getElementById('root').innerHTML=`<div class="loading"><div class="spin"></div><div class="load-txt">Fetching data...</div></div>`;
+  try{
+    const res=await fetch(`${GAS}?action=getSummary`);
+    const d=await res.json();
+    if(d.status!=='ok')throw new Error(d.message);
+    render(d);
+    document.getElementById('syncTxt').textContent=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }catch(e){
+    document.getElementById('root').innerHTML=`<div class="loading"><div class="load-txt" style="color:var(--red)">⚠ ${e.message}</div></div>`;
   }
 }
 
-// ── RENDER ────────────────────────────────────────────────────────
-function render(d) {
-  _data = d;
-  const {
-    targetPax, totalRespons, totalIkut, totalTidak, totalBelum,
-    totalPax, totalDewasa, totalAnak, naikBus, kendaraan,
-    pesertaBus, top3Tanggal, perSection, eventName, lokasi
-  } = d;
+function render(d){
+  const{targetPax,totalRespons,totalIkut,totalTidak,totalBelum,totalPax,totalDewasa,totalAnak,naikBus,kendaraan,pesertaBus,top3Tanggal,perSection,eventName,lokasi}=d;
+  const pR=pct(totalRespons,targetPax), pI=pct(totalIkut,targetPax);
+  const busN=Math.ceil(pesertaBus/59)||0, busKosong=busN*59-pesertaBus;
 
-  const pctRes  = targetPax > 0 ? Math.round(totalRespons/targetPax*100) : 0;
-  const pctIkut = targetPax > 0 ? Math.round(totalIkut/targetPax*100) : 0;
-  const busCount= Math.ceil(pesertaBus/59)||0;
-
-  // Build _allRows from perSection for filter
-  _data._allRows = [];
-  _data._noregSet = new Set();
+  _rows=[];
   Object.entries(perSection||{}).forEach(([sec,v])=>{
-    for(let i=0;i<(v.ikut||0);i++) _data._allRows.push({nama:`Peserta (${sec})`,section:sec,konfirmasi:'Ya',voteTanggal:'',totalPax:0});
-    for(let i=0;i<(v.tidak||0);i++) _data._allRows.push({nama:`Peserta (${sec})`,section:sec,konfirmasi:'Tidak',voteTanggal:'',totalPax:0});
+    for(let i=0;i<(v.ikut||0);i++) _rows.push({nama:`Peserta (${sec})`,section:sec,ikutTour:'Ya',totalPeserta:0,_belum:false,tanggal:''});
+    for(let i=0;i<(v.tidak||0);i++) _rows.push({nama:`Peserta (${sec})`,section:sec,ikutTour:'Tidak',totalPeserta:0,_belum:false,tanggal:''});
   });
 
-  // Alerts
-  const alerts = [];
-  if(pctRes < 50) alerts.push({t:'red',i:'🔴',m:`<span class="at">KRITIS:</span> Hanya ${pctRes}% respons. ${totalBelum} karyawan belum konfirmasi.`});
-  else if(totalBelum > 10) alerts.push({t:'amber',i:'⚠️',m:`<span class="at">PERHATIAN:</span> ${totalBelum} karyawan belum respons.`});
-  else if(totalBelum > 0) alerts.push({t:'blue',i:'ℹ️',m:`<span class="at">INFO:</span> ${totalBelum} karyawan belum konfirmasi. Progress ${pctRes}%.`});
-  else alerts.push({t:'green',i:'✅',m:`<span class="at">SELESAI:</span> Semua ${targetPax} karyawan sudah konfirmasi!`});
-  if(totalTidak>0) alerts.push({t:'amber',i:'📋',m:`<span class="at">${totalTidak} tidak ikut.</span> Anggaran bisa dioptimalkan.`});
+  const alerts=[];
+  if(pR<50) alerts.push({t:'al-r',i:'⚡',m:`<span class="al-b">KRITIS:</span> Hanya ${pR}% respons — ${totalBelum} karyawan belum konfirmasi.`});
+  else if(totalBelum>10) alerts.push({t:'al-a',i:'△',m:`<span class="al-b">WARNING:</span> ${totalBelum} karyawan pending konfirmasi.`});
+  else if(totalBelum>0) alerts.push({t:'al-c',i:'◎',m:`<span class="al-b">INFO:</span> ${totalBelum} remaining · ${pR}% response rate.`});
+  else alerts.push({t:'al-g',i:'✓',m:`<span class="al-b">ALL CLEAR:</span> 100% response rate. Semua ${targetPax} karyawan confirmed.`});
+  if(totalTidak>0) alerts.push({t:'al-a',i:'△',m:`<span class="al-b">${totalTidak} declined.</span> Budget adjustment possible.`});
 
-  // Section keys for filter
-  const sections = Object.keys(perSection||{}).sort();
+  const secs=Object.keys(perSection||{}).sort();
 
-  // Drill content
-  const drillIkut = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-      ${(top3Tanggal||[]).map((t,i)=>`
-        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:20px;font-weight:700;color:${CLR[i]};font-family:var(--mono)">${t.count}</div>
-          <div style="font-size:9px;color:var(--text3);margin-top:3px">${t.tanggal.replace('2026','').trim()}</div>
-        </div>`).join('')}
-      <div style="background:rgba(79,142,247,0.08);border:1px solid rgba(79,142,247,0.15);border-radius:8px;padding:10px;text-align:center">
-        <div style="font-size:20px;font-weight:700;color:#7ecfff;font-family:var(--mono)">${naikBus}</div>
-        <div style="font-size:9px;color:var(--text3);margin-top:3px">Naik Bus</div>
-      </div>
-      <div style="background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.15);border-radius:8px;padding:10px;text-align:center">
-        <div style="font-size:20px;font-weight:700;color:#fb923c;font-family:var(--mono)">${kendaraan}</div>
-        <div style="font-size:9px;color:var(--text3);margin-top:3px">Kend. Sendiri</div>
-      </div>
-    </div>`;
+  // DRILL CONTENT
+  const dIkut=encodeURIComponent(`<div class="mg2" style="margin-bottom:12px">${(top3Tanggal||[]).map((t,i)=>`<div class="mc" style="border-color:${CLR[i]}30"><div class="mc-n" style="color:${CLR[i]}">${t.count}</div><div class="mc-l">${t.tanggal.replace('2026','').trim()}</div></div>`).join('')}<div class="mc"><div class="mc-n" style="color:var(--cyan)">${naikBus}</div><div class="mc-l">Naik Bus</div></div><div class="mc"><div class="mc-n" style="color:var(--amber)">${kendaraan}</div><div class="mc-l">Kend. Sendiri</div></div></div>`);
 
-  const drillPax = `
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px">
-      ${[['Dewasa',totalDewasa,'#4f8ef7'],['Anak',totalAnak,'#f5a52a'],['Total Pax',totalPax,'#9b7ff5']].map(([l,v,c])=>`
-        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:22px;font-weight:700;color:${c};font-family:var(--mono)">${v}</div>
-          <div style="font-size:9px;color:var(--text3);margin-top:3px">${l}</div>
-        </div>`).join('')}
-    </div>
-    <div style="height:6px;border-radius:4px;overflow:hidden;display:flex;margin-bottom:10px">
-      <div style="width:${totalPax>0?Math.round(totalDewasa/totalPax*100):0}%;background:#4f8ef7"></div>
-      <div style="width:${totalPax>0?Math.round(totalAnak/totalPax*100):0}%;background:#f5a52a"></div>
-    </div>`;
+  const dPax=encodeURIComponent(`<div class="mg3" style="margin-bottom:12px">${[['Dewasa',totalDewasa,'#00c8ff'],['Anak',totalAnak,'#ffb020'],['Total',totalPax,'#00ff88']].map(([l,v,c])=>`<div class="mc"><div class="mc-n" style="color:${c}">${v}</div><div class="mc-l">${l}</div></div>`).join('')}</div><div style="display:flex;gap:14px;align-items:center">${donut([{v:totalDewasa,s:'dewasa',p:pct(totalDewasa,totalPax||1),c:'#00c8ff'},{p:pct(totalAnak,totalPax||1),c:'#ffb020'}],100)}<div style="flex:1">${[['Dewasa',totalDewasa,'#00c8ff'],['Anak',totalAnak,'#ffb020']].map(([l,v,c])=>`<div class="leg"><div class="leg-dot" style="background:${c}"></div><span class="leg-n">${l}</span><span class="leg-v" style="color:${c}">${v}</span><span class="leg-p">${pct(v,totalPax||1)}%</span></div>`).join('')}</div></div>`);
 
-  const drillBelum = totalBelum===0
-    ? `<div class="empty">🎉 Semua sudah konfirmasi!</div>`
-    : `<div style="font-size:12px;color:var(--text2);margin-bottom:10px">${totalBelum} karyawan belum mengisi form pendaftaran.</div>
-       ${sections.map(sec=>{
-         const target = (perSection[sec]?.ikut||0)+(perSection[sec]?.tidak||0);
-         const tgt2 = ({
-           "Dept. Head":1,"CCR & Ordering NR Engine Sec":13,
-           "CCR Plant #2 Prod Indication & Admin Sec":17,"CCR Vehicle Plant #1 Sec":13,
-           "Component Ordering & Inventory Mgt. Sec":8,"Warehouse KRW Plant & Steel Opr Sec":16,
-           "Warehouse Ordering & Engineering Sec":15,"Warehouse Plant #3 Sec":15
-         }[sec]||0);
-         const bel = Math.max(0, tgt2-target);
-         if(!bel) return '';
-         return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
-           <span style="font-size:11px;color:var(--text2)">${sec.replace(/Section|Sec\.?/gi,'').trim().slice(0,28)}</span>
-           <span class="badge bdg-a">${bel}</span>
-         </div>`;}).join('')}`;
+  const dBelum=encodeURIComponent(totalBelum===0
+    ?`<div style="text-align:center;padding:20px;font-family:var(--mono);font-size:11px;color:var(--green)">ALL ${targetPax} CONFIRMED ✓</div>`
+    :Object.entries(TARGETS).map(([sec,tgt])=>{const daf=(perSection[sec]?.ikut||0)+(perSection[sec]?.tidak||0),bel=Math.max(0,tgt-daf);if(!bel)return'';return`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--rim)"><span style="font-size:11px">${sec.replace(/Section|Sec\.?/gi,'').trim().slice(0,30)}</span><span class="bdg ba">${bel}</span></div>`;}).join(''));
 
-  const drillBus = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-      ${[['Bus Dibutuhkan',busCount,'#4f8ef7'],['Peserta Bus',pesertaBus,'#1fd17a'],
-         ['Kursi Kosong',busCount*59-pesertaBus,'#f5a52a'],['Occupancy',Math.round(pesertaBus/(busCount*59||1)*100)+'%','#9b7ff5']
-        ].map(([l,v,c])=>`
-        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center">
-          <div style="font-size:20px;font-weight:700;color:${c};font-family:var(--mono)">${v}</div>
-          <div style="font-size:9px;color:var(--text3);margin-top:3px">${l}</div>
-        </div>`).join('')}
-    </div>
-    ${Array.from({length:busCount},(_,i)=>{
-      const full=59, terisi=i<Math.floor(pesertaBus/59)?59:(pesertaBus%59||59);
-      return`<div class="bar-wrap">
-        <div class="bar-top"><span class="bl">🚌 Bus ${i+1}</span><span class="bv" style="color:#4f8ef7">${terisi}/59</span></div>
-        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(terisi/59*100)}%;background:linear-gradient(90deg,#3b82f6,#1fd17a)"></div></div>
-      </div>`;}).join('')}`;
+  const dBus=encodeURIComponent(`<div class="mg2" style="margin-bottom:13px">${[['Bus Dibutuhkan',busN,'#00c8ff'],['Peserta Bus',pesertaBus,'#00ff88'],['Kursi Kosong',busKosong,'#ffb020'],['Occupancy',Math.round(pesertaBus/(busN*59||1)*100)+'%','#b06eff']].map(([l,v,c])=>`<div class="mc"><div class="mc-n" style="color:${c}">${v}</div><div class="mc-l">${l}</div></div>`).join('')}</div><div class="bus-vis">${Array.from({length:busN},(_,i)=>{const t=i<Math.floor(pesertaBus/59)?59:(pesertaBus%59||59);return`<div class="bus-item"><span class="bus-lbl">BUS ${String(i+1).padStart(2,'0')}</span><div class="bus-track"><div class="bus-fill" style="width:${pct(t,59)}%"></div></div><span class="bus-cnt">${t}/59</span></div>`;}).join('')}</div>`);
 
-  document.getElementById('mainContent').innerHTML = `
+  document.getElementById('root').innerHTML=`
+  <div class="sg">
 
-  <!-- ALERTS -->
-  <div id="alertsWrap">
-    ${alerts.map(a=>`<div class="alert alert-${a.t}"><span class="alert-icon">${a.i}</span><span>${a.m}</span></div>`).join('')}
-  </div>
+    <div>${alerts.map(a=>`<div class="alert-s ${a.t}"><span style="flex-shrink:0">${a.i}</span><span>${a.m}</span></div>`).join('')}</div>
 
-  <!-- ═══ HERO SUMMARY ═══ -->
-  <div class="sec">Hero Summary</div>
-  <div class="card c-green" style="background:rgba(31,209,122,0.05);border-color:rgba(31,209,122,0.15)">
-    <div class="card-hd">
-      <div class="card-title">📊 ${eventName}</div>
-      <div class="card-sub">${lokasi}</div>
-    </div>
-
-    <div class="hero-wrap" style="margin-bottom:12px">
-      <div class="ring-box">
-        <svg width="72" height="72" viewBox="0 0 72 72">
-          <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="7"/>
-          <circle cx="36" cy="36" r="28" fill="none" stroke="#1fd17a" stroke-width="7"
-            stroke-dasharray="${Math.round(pctRes*1.759)} 175.9"
-            stroke-linecap="round" transform="rotate(-90 36 36)"/>
-          <circle cx="36" cy="36" r="28" fill="none" stroke="#f04f6a" stroke-width="7"
-            stroke-dasharray="${Math.round(pctIkut>pctRes?0:(100-pctRes)*1.759*0)} 175.9"
-            stroke-dashoffset="${-(Math.round(pctRes*1.759))}"
-            stroke-linecap="round" transform="rotate(-90 36 36)"/>
-        </svg>
-        <div class="ring-pct">${pctRes}%</div>
-        <div class="ring-lbl">${totalRespons}/${targetPax}</div>
-      </div>
-      <div class="stats-grid">
-        <div class="sc" id="sc-ikut" onclick="openDrill('ikut','${encodeURIComponent(drillIkut)}','${totalIkut} Ikut Tour','#1fd17a')">
-          <div class="sc-num" style="color:#1fd17a">${totalIkut}</div><div class="sc-lbl">Ikut</div><div class="sc-arr">▼</div>
+    <!-- CMD -->
+    <div class="cmd">
+      <div class="cmd-top">
+        <div class="cmd-ring">
+          <div class="ring-eyebrow">Response</div>
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="31" fill="none" stroke="rgba(0,200,255,0.08)" stroke-width="7"/>
+            <circle cx="40" cy="40" r="31" fill="none" stroke="var(--cyan)" stroke-width="7"
+              stroke-dasharray="${Math.round(pR*1.947)} 194.8" stroke-linecap="round"
+              transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 5px var(--cyan))"/>
+            <circle cx="40" cy="40" r="31" fill="none" stroke="rgba(255,61,90,0.6)" stroke-width="7"
+              stroke-dasharray="${Math.round(pct(totalTidak,targetPax)*1.947)} 194.8"
+              stroke-dashoffset="${-(Math.round(pI*1.947))}"
+              stroke-linecap="round" transform="rotate(-90 40 40)"/>
+          </svg>
+          <div class="ring-bot"><span>${totalRespons}</span> / ${targetPax}</div>
         </div>
-        <div class="sc" id="sc-pax" onclick="openDrill('pax','${encodeURIComponent(drillPax)}','${totalPax} Total Pax','#f5a52a')">
-          <div class="sc-num" style="color:#f5a52a">${totalPax}</div><div class="sc-lbl">Total Pax</div><div class="sc-arr">▼</div>
-        </div>
-        <div class="sc" id="sc-belum" onclick="openDrill('belum','${encodeURIComponent(drillBelum)}','${totalBelum} Belum','#f5a52a')">
-          <div class="sc-num" style="color:#f5a52a">${totalBelum}</div><div class="sc-lbl">Belum</div><div class="sc-arr">▼</div>
-        </div>
-        <div class="sc" id="sc-bus" onclick="openDrill('bus','${encodeURIComponent(drillBus)}','${busCount} Bus','#4f8ef7')">
-          <div class="sc-num" style="color:#4f8ef7">${busCount}</div><div class="sc-lbl">Bus</div><div class="sc-arr">▼</div>
-        </div>
-        <div class="sc" id="sc-tidak" onclick="openDrill('tidak','${totalTidak} karyawan konfirmasi tidak ikut.','${totalTidak} Tidak Ikut','#f04f6a')">
-          <div class="sc-num" style="color:#f04f6a">${totalTidak}</div><div class="sc-lbl">Tdk Ikut</div><div class="sc-arr">▼</div>
-        </div>
-        <div class="sc" id="sc-dewasa">
-          <div class="sc-num" style="color:#9b7ff5">${totalDewasa}</div><div class="sc-lbl">Dewasa</div>
+        <div class="vitals">
+          <div class="vital vc" id="vital-ikut" onclick="toggleDrill('ikut','${dIkut}','CONFIRMED','var(--cyan)')"><div class="v-eye">Confirmed</div><div class="v-num">${totalIkut}</div><div class="v-sub">${pI}% of ${targetPax}</div><div class="v-arr">▾</div></div>
+          <div class="vital va" id="vital-pax"  onclick="toggleDrill('pax','${dPax}','TOTAL PAX','var(--amber)')"><div class="v-eye">Total Pax</div><div class="v-num">${totalPax}</div><div class="v-sub">${totalDewasa}D · ${totalAnak}A</div><div class="v-arr">▾</div></div>
+          <div class="vital vr" id="vital-belum" onclick="toggleDrill('belum','${dBelum}','PENDING','var(--amber)')"><div class="v-eye">Pending</div><div class="v-num">${totalBelum}</div><div class="v-sub">${pct(totalBelum,targetPax)}% left</div><div class="v-arr">▾</div></div>
+          <div class="vital vc" id="vital-bus"  onclick="toggleDrill('bus','${dBus}','BUS STATUS','var(--cyan)')"><div class="v-eye">Bus</div><div class="v-num">${busN}</div><div class="v-sub">${pesertaBus} aboard</div><div class="v-arr">▾</div></div>
+          <div class="vital vr" id="vital-tidak"><div class="v-eye">Declined</div><div class="v-num">${totalTidak}</div><div class="v-sub">${pct(totalTidak,targetPax)}% of total</div></div>
+          <div class="vital vp"><div class="v-eye">Dewasa</div><div class="v-num">${totalDewasa}</div><div class="v-sub">+${totalAnak} anak</div></div>
         </div>
       </div>
-    </div>
 
-    <!-- Drill panels (semua tersembunyi, buka satu per satu) -->
-    ${['ikut','pax','belum','bus','tidak'].map(k=>`
-      <div class="drill" id="drill-${k}">
-        <div class="drill-inner">
-          <div class="drill-hd">
-            <span class="drill-title" id="drill-ttl-${k}"></span>
-            <button class="drill-close" onclick="closeDrill('${k}')">×</button>
+      ${['ikut','pax','belum','bus'].map(k=>`
+        <div class="drill" id="drill-${k}">
+          <div class="drill-in">
+            <div class="drill-hdr"><span id="drill-ttl-${k}"></span><button class="drill-close" onclick="closeDrill('${k}')">✕</button></div>
+            <div class="drill-body" id="drill-body-${k}"></div>
           </div>
-          <div id="drill-body-${k}"></div>
+        </div>`).join('')}
+
+      <div class="cmd-bar">
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>${totalRespons} responded · ${totalBelum} pending</span><span style="color:var(--cyan)">${eventName||'Tour PPIC & WH 2026'}</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:${pR}%"></div></div>
         </div>
-      </div>`).join('')}
+        <div class="cmd-pct">${pR}<small>%</small></div>
+      </div>
+      <div class="cmd-pills">
+        <span class="pill pg">✓ ${totalIkut} confirmed</span>
+        <span class="pill pr">✕ ${totalTidak} declined</span>
+        <span class="pill pa">? ${totalBelum} pending</span>
+        <span class="pill pc">${totalPax} pax · ${totalDewasa}D · ${totalAnak}A</span>
+        <span class="pill pp">${busN} bus · ${pesertaBus} aboard</span>
+      </div>
+    </div>
 
-    <!-- Overall progress bar -->
-    <div class="divider"></div>
-    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text2);margin-bottom:5px">
-      <span>${totalRespons} respons · ${totalBelum} belum</span>
-      <span style="font-family:var(--mono);font-weight:700;color:var(--green)">${pctRes}%</span>
+    <!-- STATUS -->
+    <div class="trio">
+      <div class="st stg"><div class="st-n">${totalIkut}</div><div class="st-l">Confirmed</div><div class="st-p">${pI}%</div><div class="st-bar" style="width:${pI}%"></div></div>
+      <div class="st sta"><div class="st-n">${totalBelum}</div><div class="st-l">Pending</div><div class="st-p">${pct(totalBelum,targetPax)}%</div><div class="st-bar" style="width:${pct(totalBelum,targetPax)}%"></div></div>
+      <div class="st str"><div class="st-n">${totalTidak}</div><div class="st-l">Declined</div><div class="st-p">${pct(totalTidak,targetPax)}%</div><div class="st-bar" style="width:${pct(totalTidak,targetPax)}%"></div></div>
     </div>
-    <div class="bar-track" style="height:8px;margin-bottom:9px">
-      <div class="bar-fill" style="width:${pctRes}%;background:linear-gradient(90deg,#0ea5e9,#1fd17a)"></div>
-    </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
-      <span class="pill pill-g">✓ ${totalIkut} ikut</span>
-      <span class="pill pill-r">✕ ${totalTidak} tidak</span>
-      <span class="pill pill-a">? ${totalBelum} belum</span>
-      <span class="pill" style="background:rgba(155,127,245,0.1);border:1px solid rgba(155,127,245,0.2);color:#9b7ff5">${totalPax} pax · ${totalDewasa} dws · ${totalAnak} anak</span>
-    </div>
-  </div>
 
-  <!-- ═══ STATUS PESERTA ═══ -->
-  <div class="sec">Status Peserta</div>
-  <div class="status-row">
-    <div class="sb sb-g">
-      <div class="sb-num">${totalIkut}</div><div class="sb-lbl">Confirm</div>
-      <div class="sb-pct">${pctIkut}%</div>
-      <div class="sb-bar" style="width:${pctIkut}%"></div>
-    </div>
-    <div class="sb sb-a">
-      <div class="sb-num">${totalBelum}</div><div class="sb-lbl">Pending</div>
-      <div class="sb-pct">${Math.round(totalBelum/targetPax*100)}%</div>
-      <div class="sb-bar" style="width:${Math.round(totalBelum/targetPax*100)}%"></div>
-    </div>
-    <div class="sb sb-r">
-      <div class="sb-num">${totalTidak}</div><div class="sb-lbl">Tidak Ikut</div>
-      <div class="sb-pct">${Math.round(totalTidak/targetPax*100)}%</div>
-      <div class="sb-bar" style="width:${Math.round(totalTidak/targetPax*100)}%"></div>
-    </div>
-  </div>
-
-  <!-- PROGRESS PER SECTION -->
-  <div class="card c-purple" style="background:rgba(155,127,245,0.05);border-color:rgba(155,127,245,0.15)">
-    <div class="card-hd"><div class="card-title">🏢 Progress per Section</div></div>
-    ${Object.entries({
-      "Dept. Head":1,"CCR & Ordering NR Engine Sec":13,
-      "CCR Plant #2 Prod Indication & Admin Sec":17,"CCR Vehicle Plant #1 Sec":13,
-      "Component Ordering & Inventory Mgt. Sec":8,"Warehouse KRW Plant & Steel Opr Sec":16,
-      "Warehouse Ordering & Engineering Sec":15,"Warehouse Plant #3 Sec":15
-    }).map(([sec,target])=>{
-      const daftar=(perSection[sec]?.ikut||0)+(perSection[sec]?.tidak||0);
-      const p=Math.min(Math.round(daftar/target*100),100);
-      const clr=p>=100?'#1fd17a':p>=60?'#f5a52a':'#f04f6a';
-      return`<div class="bar-wrap">
-        <div class="bar-top">
-          <span class="bl">${sec}</span>
-          <span class="bv" style="color:${clr}">${daftar}/${target} <small style="opacity:.6;font-size:10px">(${p}%)</small></span>
-        </div>
-        <div class="bar-track"><div class="bar-fill" style="width:${p}%;background:${clr}"></div></div>
-      </div>`;}).join('')}
-    <div style="margin-top:12px;padding:9px 12px;background:rgba(245,165,42,0.08);border:1px solid rgba(245,165,42,0.18);border-radius:8px;display:flex;justify-content:space-between">
-      <span style="font-weight:700;color:#f5a52a;font-size:12px">Grand Total</span>
-      <span style="font-weight:700;color:#f5a52a;font-size:13px;font-family:var(--mono)">${totalIkut}/${targetPax} (${pctIkut}%)</span>
-    </div>
-  </div>
-
-  <!-- ═══ TOP 3 TANGGAL ═══ -->
-  <div class="sec">Pilihan Tanggal</div>
-  <div class="card c-amber" style="background:rgba(245,165,42,0.05);border-color:rgba(245,165,42,0.15)">
-    <div class="card-hd"><div class="card-title">📅 Top 3 Pilihan Tanggal Tour</div></div>
-    <div class="tgl-cards">
-      ${(top3Tanggal||[]).map((t,i)=>{
-        const maxCount = top3Tanggal[0]?.count||1;
-        const colors = ['#f5a52a','#7889b2','#fb923c'];
-        return`<div class="tgl-card">
-          <div class="tgl-rank ${['r1','r2','r3'][i]}">#${i+1}</div>
-          <div class="tgl-info">
-            <div class="tgl-name">${t.tanggal}</div>
-            <div class="tgl-bar-track"><div class="tgl-bar-fill" style="width:${Math.round(t.count/maxCount*100)}%;background:${colors[i]}"></div></div>
+    <!-- SECTION -->
+    <div>
+      <div class="sec-lbl">Section Progress</div>
+      <div class="panel">
+        <div class="p-hdr"><span class="p-title">◈ KEHADIRAN PER SECTION</span><span class="p-sub">${totalIkut}/${targetPax}</span></div>
+        <div class="p-body">
+          ${Object.entries(TARGETS).map(([sec,tgt])=>{
+            const daf=(perSection[sec]?.ikut||0)+(perSection[sec]?.tidak||0);
+            const p=Math.min(pct(daf,tgt),100);
+            const clr=p>=100?'var(--green)':p>=60?'var(--cyan)':'var(--amber)';
+            return`<div class="br"><div class="br-meta"><span class="br-n">${sec}</span><span class="br-v" style="color:${clr}">${daf}/${tgt} <span style="opacity:.5;font-size:9px">(${p}%)</span></span></div><div class="br-track"><div class="br-fill" style="width:${p}%;background:${clr}"></div></div></div>`;
+          }).join('')}
+          <div style="margin-top:12px;padding:9px 12px;background:rgba(0,200,255,0.05);border:1px solid rgba(0,200,255,0.15);border-radius:4px;display:flex;justify-content:space-between">
+            <span style="font-family:var(--mono);font-size:10px;color:var(--muted)">GRAND TOTAL</span>
+            <span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--cyan)">${totalIkut} / ${targetPax} — ${pI}%</span>
           </div>
-          <div class="tgl-count" style="color:${colors[i]}">${t.count}</div>
-        </div>`;}).join('')||'<div class="empty">Belum ada data</div>'}
-    </div>
-  </div>
-
-  <!-- ═══ LOGISTIK BUS ═══ -->
-  <div class="sec">Logistik Transportasi</div>
-  <div class="card c-blue" style="background:rgba(79,142,247,0.05);border-color:rgba(79,142,247,0.15)">
-    <div class="card-hd"><div class="card-title">🚌 Bus vs Kendaraan Sendiri</div></div>
-    <div class="mini-grid g3" style="margin-bottom:12px">
-      <div class="mc" style="background:rgba(79,142,247,0.1);border:1px solid rgba(79,142,247,0.2)">
-        <div class="mc-num" style="color:#4f8ef7">${busCount}</div><div class="mc-lbl">Bus Dibutuhkan</div>
-      </div>
-      <div class="mc" style="background:rgba(31,209,122,0.1);border:1px solid rgba(31,209,122,0.2)">
-        <div class="mc-num" style="color:#1fd17a">${pesertaBus}</div><div class="mc-lbl">Peserta Bus</div>
-      </div>
-      <div class="mc" style="background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.2)">
-        <div class="mc-num" style="color:#fb923c">${kendaraan}</div><div class="mc-lbl">Kend. Sendiri</div>
+        </div>
       </div>
     </div>
-    <div class="chart-wrap">
-      <canvas id="busChart"></canvas>
-    </div>
-  </div>
 
-  <!-- ═══ BREAKDOWN PAX ═══ -->
-  <div class="sec">Komposisi Peserta</div>
-  <div class="card c-blue">
-    <div class="card-hd"><div class="card-title">👥 Dewasa vs Anak</div><div class="card-sub">${totalPax} total pax</div></div>
-    <div style="display:flex;gap:16px;align-items:center">
-      ${donutSVG([
-        {v:totalDewasa,s:'dewasa',p:totalPax>0?Math.round(totalDewasa/totalPax*100):0,c:'#4f8ef7'},
-        {p:totalPax>0?Math.round(totalAnak/totalPax*100):0,c:'#f5a52a'}
-      ],110)}
-      <div style="flex:1">
-        ${[['Dewasa',totalDewasa,'#4f8ef7'],['Anak',totalAnak,'#f5a52a']].map(([l,v,c])=>`
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-            <div style="width:10px;height:10px;border-radius:50%;background:${c};flex-shrink:0"></div>
-            <span style="font-size:12px;color:var(--text2);flex:1">${l}</span>
-            <span style="font-size:14px;font-weight:700;color:${c};font-family:var(--mono)">${v}</span>
-            <span style="font-size:10px;color:var(--text3);font-family:var(--mono)">${totalPax>0?Math.round(v/totalPax*100):0}%</span>
-          </div>`).join('')}
+    <!-- TOP 3 -->
+    <div>
+      <div class="sec-lbl">Voting Tanggal</div>
+      <div class="panel">
+        <div class="p-hdr"><span class="p-title">◈ TOP 3 PILIHAN TANGGAL</span><span class="p-sub">${totalIkut} votes</span></div>
+        <div class="p-body">
+          <div class="tgl-list">
+            ${(top3Tanggal||[]).map((t,i)=>{
+              const mx=top3Tanggal[0]?.count||1;
+              const clrs=[CLR[1],CLR[0],CLR[7]];
+              return`<div class="tgl-row"><div class="tgl-rank">#${i+1}</div><div class="tgl-info"><div class="tgl-name">${t.tanggal}</div><div class="tgl-btrack"><div class="tgl-bfill" style="width:${pct(t.count,mx)}%;background:${clrs[i]}"></div></div></div><div class="tgl-c" style="color:${clrs[i]}">${t.count}</div></div>`;
+            }).join('')||'<div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted);padding:16px">No data yet</div>'}
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ═══ FILTER & TABLE ═══ -->
-  <div class="sec">Data Peserta</div>
-  <div class="card">
-    <div class="card-hd">
-      <div class="card-title">🔍 Cari &amp; Filter</div>
-      <span id="tblCount" style="font-size:11px;color:var(--text3);font-family:var(--mono)"></span>
+    <!-- LOGISTIK -->
+    <div>
+      <div class="sec-lbl">Logistik</div>
+      <div class="panel">
+        <div class="p-hdr"><span class="p-title">◈ BUS vs KENDARAAN SENDIRI</span></div>
+        <div class="p-body">
+          <div class="logi" style="margin-bottom:14px">
+            <div class="logi-c"><div class="logi-n" style="color:var(--cyan)">${busN}</div><div class="logi-l">Bus Dibutuhkan</div></div>
+            <div class="logi-c"><div class="logi-n" style="color:var(--green)">${pesertaBus}</div><div class="logi-l">Peserta Bus</div></div>
+            <div class="logi-c"><div class="logi-n" style="color:var(--amber)">${kendaraan}</div><div class="logi-l">Kend. Sendiri</div></div>
+          </div>
+          <div class="chart-wrap"><canvas id="busChart"></canvas></div>
+        </div>
+      </div>
     </div>
-    <div class="filter-row">
-      <input type="text" id="searchQ" class="f-input" placeholder="🔍 Cari nama..." oninput="applyFilter()" style="flex:2">
-      <select id="filterStat" class="f-input" onchange="applyFilter()">
-        <option value="">Semua Status</option>
-        <option value="ikut">Ikut</option>
-        <option value="tidak">Tidak Ikut</option>
-        <option value="belum">Belum</option>
-      </select>
-      <select id="filterSec" class="f-input" onchange="applyFilter()">
-        <option value="">Semua Section</option>
-        ${sections.map(s=>`<option>${s}</option>`).join('')}
-      </select>
-    </div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>Nama</th><th>Section</th><th>Status</th><th>Tanggal</th><th class="r">Pax</th></tr></thead>
-        <tbody id="tblBody"></tbody>
-      </table>
-    </div>
-  </div>
-  `;
 
-  // Init charts
+    <!-- PAX BREAKDOWN -->
+    <div>
+      <div class="sec-lbl">Komposisi Peserta</div>
+      <div class="panel">
+        <div class="p-hdr"><span class="p-title">◈ DEWASA / ANAK</span><span class="p-sub">${totalPax} total pax</span></div>
+        <div class="p-body">
+          <div style="display:flex;gap:16px;align-items:center">
+            ${donut([{v:totalDewasa,s:'dewasa',p:pct(totalDewasa,totalPax||1),c:'#00c8ff'},{p:pct(totalAnak,totalPax||1),c:'#ffb020'}],106)}
+            <div style="flex:1">
+              ${[['Dewasa',totalDewasa,'#00c8ff'],['Anak',totalAnak,'#ffb020']].map(([l,v,c])=>`<div class="leg"><div class="leg-dot" style="background:${c}"></div><span class="leg-n">${l}</span><span class="leg-v" style="color:${c}">${v}</span><span class="leg-p">${pct(v,totalPax||1)}%</span></div>`).join('')}
+              <div class="divider"></div>
+              ${[['Naik Bus',naikBus,'#00c8ff'],['Kend. Sendiri',kendaraan,'#ffb020']].map(([l,v,c])=>`<div class="leg"><div class="leg-dot" style="background:${c}"></div><span class="leg-n">${l}</span><span class="leg-v" style="color:${c}">${v}</span><span class="leg-p">${pct(v,totalIkut||1)}%</span></div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div>
+      <div class="sec-lbl">Data Terminal</div>
+      <div class="panel">
+        <div class="p-hdr"><span class="p-title">◈ PARTICIPANT RECORDS</span><span class="p-sub" id="tblCount"></span></div>
+        <div class="p-body">
+          <div class="filter-row">
+            <input class="fi" id="fQ" placeholder="⌕  search name..." oninput="applyFilter()" style="flex:2">
+            <select class="fi" id="fStat" onchange="applyFilter()"><option value="">All Status</option><option value="ikut">Confirmed</option><option value="tidak">Declined</option><option value="belum">Pending</option></select>
+            <select class="fi" id="fSec" onchange="applyFilter()"><option value="">All Sections</option>${secs.map(s=>`<option value="${s}">${ss(s)}</option>`).join('')}</select>
+          </div>
+        </div>
+        <div class="p-body np">
+          <div class="tbl-wrap">
+            <table class="tbl">
+              <thead><tr><th>Name</th><th>Section</th><th>Status</th><th>Date</th><th class="r">Pax</th></tr></thead>
+              <tbody id="tblBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>`;
+
   setTimeout(()=>{
-    const ctx = document.getElementById('busChart');
-    if(ctx) {
-      new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: ['Naik Bus','Kendaraan Sendiri'],
-          datasets:[{
-            data:[naikBus, kendaraan],
-            backgroundColor:['rgba(79,142,247,.7)','rgba(251,146,60,.7)'],
-            borderColor:['rgba(79,142,247,.9)','rgba(251,146,60,.9)'],
-            borderWidth:1.5
-          }]
-        },
-        options:{
-          responsive:true, maintainAspectRatio:false, cutout:'60%',
-          plugins:{
-            legend:{position:'right',labels:{color:'#7889b2',font:{family:'DM Mono',size:11},boxWidth:10,padding:10}},
-            tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw} orang`}}
-          }
-        }
-      });
-    }
-
-    // Override drill openDrill to decode URI
-    const origOpen = window.openDrill;
-    window.openDrill = function(key, html, title, color) {
-      const decoded = decodeURIComponent(html);
-      const panel = document.getElementById('drill-'+key);
-      if(!panel) return;
-      if(_drill===key){
-        _drill='';
-        panel.classList.remove('open');
-        document.querySelectorAll('.sc').forEach(c=>c.classList.remove('active'));
-        return;
-      }
-      document.querySelectorAll('.drill').forEach(p=>p.classList.remove('open'));
-      document.querySelectorAll('.sc').forEach(c=>c.classList.remove('active'));
-      _drill=key;
-      panel.classList.add('open');
-      document.getElementById('sc-'+key)?.classList.add('active');
-      document.getElementById('drill-ttl-'+key).textContent = title;
-      document.getElementById('drill-body-'+key).innerHTML = decoded;
-      panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-    };
-
+    const ctx=document.getElementById('busChart');
+    if(ctx){if(_chartBus)_chartBus.destroy();
+      _chartBus=new Chart(ctx,{type:'doughnut',data:{labels:['Naik Bus','Kendaraan Sendiri'],datasets:[{data:[naikBus,kendaraan],backgroundColor:['rgba(0,200,255,.12)','rgba(255,176,32,.12)'],borderColor:['rgba(0,200,255,.8)','rgba(255,176,32,.8)'],borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{color:'rgba(180,220,255,.5)',font:{family:'Space Mono',size:10},boxWidth:8,padding:12}},tooltip:{callbacks:{label:c=>` ${c.label}: ${c.raw} orang`}}}}});}
     applyFilter();
-  }, 100);
+  },80);
 }
-
 loadData();
 </script>
 </body>
