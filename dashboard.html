@@ -554,6 +554,7 @@ function applyFilter(){
       return m&&sm&&qm;
     }).map(k=>({_belum:true,nama:k.name,section:k.sec,ikut:'belum',tanggal:'—',pax:'—',transport:'—',kaos:'—'}));
   } else {
+    const SECT_ORDER=Object.keys(TARGETS);
     filtered=data.filter(r=>{
       const nm=(r[1]||'').toLowerCase(),sc=r[3]||'';
       const iku=!r[32]||r[32]==='Ya'||r[32]==='';
@@ -561,7 +562,12 @@ function applyFilter(){
       const stm=!stat||(stat==='ikut'&&iku)||(stat==='tidak'&&r[32]==='Tidak');
       const qm=!q||nm.includes(q)||sc.toLowerCase().includes(q)||String(r[2]).includes(q);
       return sm&&stm&&qm;
-    }).map(r=>({nama:r[1],noreg:r[2],section:r[3],ikut:!r[32]||r[32]==='Ya'||r[32]===''?'Ya':'Tidak',tanggal:(r[5]||'').replace('2026','').trim(),pax:r[11],transport:r[28],kaos:kaosLbl(r),r}));
+    }).map(r=>({nama:r[1],noreg:r[2],section:r[3],ikut:!r[32]||r[32]==='Ya'||r[32]===''?'Ya':'Tidak',tanggal:(r[5]||'').replace('2026','').trim(),pax:r[11],transport:r[28],kaos:kaosLbl(r),r}))
+    .sort((a,b)=>{
+      const si=SECT_ORDER.indexOf(a.section),sj=SECT_ORDER.indexOf(b.section);
+      if(si!==sj)return(si<0?999:si)-(sj<0?999:sj);
+      return(a.nama||'').localeCompare(b.nama||'','id');
+    });
   }
   const tbody=document.getElementById('tblBody');
   document.getElementById('tblCount').textContent=filtered.length+' data';
@@ -594,14 +600,147 @@ function render(data){
   km.sharingRooms.forEach((room,i)=>{room.members.forEach(r=>{kamarMap[r[1]]={t:'sh',l:`Kamar ${i+1}`};});});
 
   // ── DRILL CONTENT ──
-  const dIkut=encodeURIComponent(`
-    <div class="mg2" style="margin-bottom:12px">
-      ${Object.entries(s.perTanggal).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>`<div class="mc" style="border-color:${CLR[i]}30"><div class="mc-n" style="color:${CLR[i]}">${v}</div><div class="mc-l">${k.replace('2026','').trim()}</div></div>`).join('')}
-      ${Object.entries(s.perKehadiran).map(([k,v],i)=>`<div class="mc"><div class="mc-n" style="color:${CLR[i+3]}">${v}</div><div class="mc-l">${k}</div></div>`).join('')}
-      <div class="mc" style="border-color:rgba(0,200,255,.25)"><div class="mc-n" style="color:var(--cyan)">${s.naikBus}</div><div class="mc-l">Naik Bus</div></div>
-      <div class="mc" style="border-color:rgba(251,146,60,.25)"><div class="mc-n" style="color:var(--orange)">${s.kendaraan}</div><div class="mc-l">Kend. Sendiri</div></div>
-    </div>`);
 
+  // ① CONFIRMED — tanggal + transport
+  const dIkut=encodeURIComponent(`
+    <div class="mg3" style="margin-bottom:14px">
+      <div class="mc"><div class="mc-n" style="color:var(--green)">${s.totalIkut}</div><div class="mc-l">Total Ikut</div></div>
+      <div class="mc"><div class="mc-n" style="color:var(--cyan)">${s.naikBus}</div><div class="mc-l">Naik Bus</div></div>
+      <div class="mc"><div class="mc-n" style="color:var(--orange)">${s.kendaraan}</div><div class="mc-l">Kend. Sendiri</div></div>
+    </div>
+    <div style="font-family:var(--mono);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Pilihan Tanggal</div>
+    ${Object.entries(s.perTanggal).sort((a,b)=>b[1]-a[1]).map(([k,v],i)=>{
+      const mx=Math.max(...Object.values(s.perTanggal));
+      return`<div style="margin-bottom:8px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+          <span style="color:var(--text);font-weight:600">${k}</span>
+          <span style="font-family:var(--mono);font-weight:700;color:${CLR[i]}">${v} orang · ${p(v,s.totalIkut)}%</span>
+        </div>
+        <div class="br-track"><div class="br-fill" style="width:${p(v,mx)}%;background:${CLR[i]}"></div></div>
+      </div>`;}).join('')}`);
+
+  // ② PENDING — per section, nama + noreg lengkap
+  const dBelum=encodeURIComponent(s.belum===0
+    ?`<div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--green);padding:20px">✓ ALL ${GRAND} CONFIRMED</div>`
+    :(()=>{
+      const totalBelumAll=MASTER.filter(k=>!sudahSet.has(nn(k.noreg))).length;
+      let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07)">
+        <span style="font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Total Belum Isi</span>
+        <span style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--amber)">${totalBelumAll} orang</span>
+      </div>`;
+      Object.entries(TARGETS).forEach(([sec,tgt])=>{
+        const list=MASTER.filter(k=>k.sec===sec&&!sudahSet.has(nn(k.noreg)));
+        if(!list.length)return;
+        html+=`<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:5px;margin-bottom:5px;border-bottom:1px solid rgba(255,255,255,0.06)">
+            <span style="font-size:11px;font-weight:700;color:var(--text)">${sec.replace(/Section|Sec\.?/gi,'').trim()}</span>
+            <span class="bdg ba">${list.length} belum</span>
+          </div>
+          ${list.map((k,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0 5px 10px;border-left:2px solid rgba(255,176,32,.3);border-bottom:1px solid rgba(255,255,255,0.04)">
+            <span style="font-size:11px;font-weight:600;color:var(--text)">${k.name}</span>
+            <span style="font-family:var(--mono);font-size:9px;color:var(--muted)">${k.noreg}</span>
+          </div>`).join('')}
+        </div>`;
+      });
+      return html;
+    })());
+
+  // ③ DECLINED — per section, nama lengkap
+  const dTidak=encodeURIComponent(s.totalTidak===0
+    ?`<div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted);padding:20px">Belum ada yang tidak ikut</div>`
+    :(()=>{
+      const bySec={};
+      s.dataTidak.forEach(r=>{const sc=r[3]||'?';if(!bySec[sc])bySec[sc]=[];bySec[sc].push(r);});
+      let html=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.07)">
+        <span style="font-family:var(--mono);font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Total Declined</span>
+        <span style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--red)">${s.totalTidak} orang</span>
+      </div>`;
+      Object.entries(bySec).sort((a,b)=>b[1].length-a[1].length).forEach(([sec,rows])=>{
+        html+=`<div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:5px;margin-bottom:5px;border-bottom:1px solid rgba(255,255,255,0.06)">
+            <span style="font-size:11px;font-weight:700;color:var(--text)">${sec.replace(/Section|Sec\.?/gi,'').trim()}</span>
+            <span class="bdg br2">${rows.length} orang</span>
+          </div>
+          ${rows.map(r=>`<div style="display:flex;align-items:center;padding:5px 0 5px 10px;border-left:2px solid rgba(255,61,90,.3);border-bottom:1px solid rgba(255,255,255,0.04)">
+            <span style="font-size:11px;font-weight:600;color:var(--text);flex:1">${r[1]}</span>
+          </div>`).join('')}
+        </div>`;
+      });
+      return html;
+    })());
+
+  // ④ STATUS PER SECTION — confirmed / pending / declined stacked bar
+  const dStatus=encodeURIComponent((()=>{
+    let html=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px">
+      <div class="mc" style="border-color:rgba(0,255,136,.2)"><div class="mc-n" style="color:var(--green)">${s.totalIkut}</div><div class="mc-l">Confirmed</div></div>
+      <div class="mc" style="border-color:rgba(255,176,32,.2)"><div class="mc-n" style="color:var(--amber)">${s.belum}</div><div class="mc-l">Pending</div></div>
+      <div class="mc" style="border-color:rgba(255,61,90,.2)"><div class="mc-n" style="color:var(--red)">${s.totalTidak}</div><div class="mc-l">Declined</div></div>
+    </div>
+    <div style="font-family:var(--mono);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Breakdown per Section</div>`;
+    Object.entries(TARGETS).forEach(([sec,tgt])=>{
+      const confirmed=s.dataIkut.filter(r=>r[3]===sec).length;
+      const declined=s.dataTidak.filter(r=>r[3]===sec).length;
+      const pending=Math.max(0,tgt-confirmed-declined);
+      const pC=p(confirmed,tgt),pD=p(declined,tgt),pP=p(pending,tgt);
+      html+=`<div style="margin-bottom:11px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">
+          <span style="font-size:11px;font-weight:700;color:var(--text2)">${sec.replace(/Section|Sec\.?/gi,'').trim()}</span>
+          <span style="font-family:var(--mono);font-size:9px;color:var(--muted)">${tgt} target</span>
+        </div>
+        <div style="display:flex;height:7px;border-radius:3px;overflow:hidden;margin-bottom:5px;background:rgba(255,255,255,0.04)">
+          <div style="width:${pC}%;background:var(--green)"></div>
+          <div style="width:${pP}%;background:var(--amber)"></div>
+          <div style="width:${pD}%;background:var(--red)"></div>
+        </div>
+        <div style="display:flex;gap:12px;font-family:var(--mono);font-size:9px">
+          <span style="color:var(--green)">✓ ${confirmed} confirmed</span>
+          <span style="color:var(--amber)">? ${pending} pending</span>
+          ${declined>0?`<span style="color:var(--red)">✕ ${declined} declined</span>`:''}
+        </div>
+      </div>`;
+    });
+    return html;
+  })());
+
+  // ⑤ KENDARAAN SENDIRI — per section + pax detail
+  const dKendaraan=encodeURIComponent((()=>{
+    const kList=s.dataIkut.filter(r=>r[28]==='Kendaraan Sendiri');
+    const totalPaxKend=kList.reduce((a,r)=>a+(parseInt(r[11])||1),0);
+    const bySec={};
+    kList.forEach(r=>{const sc=r[3]||'?';if(!bySec[sc])bySec[sc]=[];bySec[sc].push(r);});
+    let html=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px">
+      <div class="mc" style="border-color:rgba(251,146,60,.2)"><div class="mc-n" style="color:var(--orange)">${s.kendaraan}</div><div class="mc-l">Karyawan</div></div>
+      <div class="mc" style="border-color:rgba(255,176,32,.2)"><div class="mc-n" style="color:var(--amber)">${totalPaxKend}</div><div class="mc-l">Total Pax</div></div>
+    </div>
+    <div style="font-family:var(--mono);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">Per Section</div>`;
+    Object.entries(bySec).sort((a,b)=>b[1].length-a[1].length).forEach(([sec,rows])=>{
+      const paxSec=rows.reduce((a,r)=>a+(parseInt(r[11])||1),0);
+      html+=`<div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:5px;margin-bottom:5px;border-bottom:1px solid rgba(255,255,255,0.06)">
+          <span style="font-size:11px;font-weight:700;color:var(--text2)">${sec.replace(/Section|Sec\.?/gi,'').trim()}</span>
+          <div style="display:flex;gap:5px">
+            <span class="bdg" style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.25);color:var(--orange)">${rows.length} kary</span>
+            <span class="bdg" style="background:rgba(255,176,32,.1);border:1px solid rgba(255,176,32,.25);color:var(--amber)">${paxSec} pax</span>
+          </div>
+        </div>
+        ${rows.map(r=>`<div style="display:flex;align-items:center;gap:8px;padding:5px 0 5px 10px;border-left:2px solid rgba(251,146,60,.3);border-bottom:1px solid rgba(255,255,255,0.04)">
+          <span style="font-size:11px;font-weight:600;color:var(--text);flex:1">${r[1]}</span>
+          <span style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--amber)">${r[11]} pax</span>
+          <span style="font-size:9px;color:var(--muted)">${(r[5]||'').replace('2026','').trim()}</span>
+        </div>`).join('')}
+      </div>`;
+    });
+    return html;
+  })());
+
+  // BUS drill
+  const dBus=encodeURIComponent(`
+    <div class="mg2" style="margin-bottom:12px">
+      ${[['Bus Dibutuhkan',busN,'var(--cyan)'],['Peserta Bus',s.pesertaBus,'var(--green)'],['Kursi Kosong',calcBus(s.pesertaBus,BUS_DEF).kosong,'var(--amber)'],['Occupancy',calcBus(s.pesertaBus,BUS_DEF).occupancy+'%','var(--purple)']].map(([l,v,c])=>`<div class="mc"><div class="mc-n" style="color:${c}">${v}</div><div class="mc-l">${l}</div></div>`).join('')}
+    </div>
+    <div>${Array.from({length:busN},(_,i)=>{const t=i<Math.floor(s.pesertaBus/BUS_DEF)?BUS_DEF:(s.pesertaBus%BUS_DEF||BUS_DEF);return`<div class="bus-item"><span class="bus-lbl">BUS ${String(i+1).padStart(2,'0')}</span><div class="bus-track"><div class="bus-fill" style="width:${p(t,BUS_DEF)}%"></div></div><span class="bus-cnt">${t}/59</span></div>`;}).join('')}</div>`);
+
+  // PAX drill
   const dPax=encodeURIComponent(`
     <div class="mg3" style="margin-bottom:12px">
       <div class="mc"><div class="mc-n" style="color:var(--cyan)">${s.paxDewasaActual}</div><div class="mc-l">Dewasa ≥12</div></div>
@@ -614,33 +753,6 @@ function render(data){
         ${[['Dewasa ≥12',s.paxDewasaActual,'#00c8ff'],['Anak 5–11',s.paxAnak,'#ffb020'],['Balita <5',s.paxBalita,'#f472b6']].map(([l,v,c])=>`<div class="leg"><div class="leg-dot" style="background:${c}"></div><span class="leg-n">${l}</span><span class="leg-v" style="color:${c}">${v}</span><span class="leg-p">${p(v,s.totalPax||1)}%</span></div>`).join('')}
       </div>
     </div>`);
-
-  const dBelum=encodeURIComponent(s.belum===0
-    ?`<div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--green);padding:16px">ALL ${GRAND} CONFIRMED ✓</div>`
-    :Object.entries(TARGETS).map(([sec,tgt])=>{
-        const daf=(s.perSection[sec]||0),bel=Math.max(0,tgt-daf);
-        const list=MASTER.filter(k=>k.sec===sec&&!sudahSet.has(nn(k.noreg)));
-        if(!list.length)return'';
-        return`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span style="font-size:11px;color:var(--text)">${sec.replace(/Section|Sec\.?/gi,'').trim().slice(0,30)}</span><span class="bdg ba">${list.length}</span></div>${list.map(k=>`<div style="font-size:10px;color:var(--muted);padding:3px 0 3px 10px;border-left:2px solid rgba(255,176,32,.25)">⚠ ${k.name}</div>`).join('')}</div>`;
-      }).join(''));
-
-  const dTidak=encodeURIComponent(s.totalTidak===0
-    ?`<div style="text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted);padding:16px">Belum ada yang tidak ikut</div>`
-    :s.dataTidak.map((r,i)=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04)"><span style="font-family:var(--mono);font-size:9px;color:var(--muted);width:16px">${i+1}</span><div style="flex:1"><div style="font-size:12px;font-weight:600">${r[1]}</div><div style="font-size:9px;color:var(--muted)">${ss(r[3])}</div></div><span class="bdg br2">TIDAK</span></div>`).join(''));
-
-  const dKamar=encodeURIComponent(`
-    <div class="mg3" style="margin-bottom:10px">
-      <div class="mc"><div class="mc-n" style="color:var(--teal)">${km.totalKamar}</div><div class="mc-l">Total</div></div>
-      <div class="mc"><div class="mc-n" style="color:var(--orange)">${km.kamarKeluarga}</div><div class="mc-l">Keluarga</div></div>
-      <div class="mc"><div class="mc-n" style="color:var(--cyan)">${km.kamarSharing}</div><div class="mc-l">Sharing</div></div>
-    </div>
-    <div style="font-size:10px;color:var(--muted)">Detail lihat bagian Akomodasi ↓</div>`);
-
-  const dBus=encodeURIComponent(`
-    <div class="mg2" style="margin-bottom:12px">
-      ${[['Bus Dibutuhkan',busN,'var(--cyan)'],['Peserta Bus',s.pesertaBus,'var(--green)'],['Kursi Kosong',calcBus(s.pesertaBus,BUS_DEF).kosong,'var(--amber)'],['Occupancy',calcBus(s.pesertaBus,BUS_DEF).occupancy+'%','var(--purple)']].map(([l,v,c])=>`<div class="mc"><div class="mc-n" style="color:${c}">${v}</div><div class="mc-l">${l}</div></div>`).join('')}
-    </div>
-    <div>${Array.from({length:busN},(_,i)=>{const t=i<Math.floor(s.pesertaBus/BUS_DEF)?BUS_DEF:(s.pesertaBus%BUS_DEF||BUS_DEF);return`<div class="bus-item"><span class="bus-lbl">BUS ${String(i+1).padStart(2,'0')}</span><div class="bus-track"><div class="bus-fill" style="width:${p(t,BUS_DEF)}%"></div></div><span class="bus-cnt">${t}/59</span></div>`;}).join('')}</div>`);
 
   document.getElementById('root').innerHTML=`<div class="sg">
 
@@ -665,16 +777,16 @@ function render(data){
         <div class="ring-sub"><b>${s.totalIsi}</b> / ${GRAND}</div>
       </div>
       <div class="vitals">
-        <div class="vt vc" id="vt-ikut" onclick="toggleDrill('ikut','${dIkut}','CONFIRMED','var(--cyan)')"><div class="vt-eye">Confirmed</div><div class="vt-n">${s.totalIkut}</div><div class="vt-s">${pI}% of ${GRAND}</div><div class="vt-arr">▾</div></div>
-        <div class="vt va" id="vt-pax"  onclick="toggleDrill('pax','${dPax}','TOTAL PAX','var(--amber)')"><div class="vt-eye">Total Pax</div><div class="vt-n">${s.totalPax}</div><div class="vt-s">${s.totalDewasa}D · ${s.totalAnak}A</div><div class="vt-arr">▾</div></div>
-        <div class="vt vr" id="vt-belum" onclick="toggleDrill('belum','${dBelum}','PENDING','var(--amber)')"><div class="vt-eye">Pending</div><div class="vt-n">${s.belum}</div><div class="vt-s">${p(s.belum,GRAND)}% left</div><div class="vt-arr">▾</div></div>
-        <div class="vt vc" id="vt-bus"  onclick="toggleDrill('bus','${dBus}','BUS STATUS','var(--cyan)')"><div class="vt-eye">Bus</div><div class="vt-n">${busN}</div><div class="vt-s">${s.pesertaBus} aboard</div><div class="vt-arr">▾</div></div>
-        <div class="vt vr" id="vt-tidak" onclick="toggleDrill('tidak','${dTidak}','DECLINED','var(--red)')"><div class="vt-eye">Declined</div><div class="vt-n">${s.totalTidak}</div><div class="vt-s">${p(s.totalTidak,GRAND)}%</div><div class="vt-arr">▾</div></div>
-        <div class="vt vt2" id="vt-kamar" onclick="toggleDrill('kamar','${dKamar}','KAMAR','var(--teal)')"><div class="vt-eye">Kamar</div><div class="vt-n">${km.totalKamar}</div><div class="vt-s">${km.kamarKeluarga}K·${km.kamarSharing}S</div><div class="vt-arr">▾</div></div>
+        <div class="vt vc" id="vt-ikut"     onclick="toggleDrill('ikut','${dIkut}','CONFIRMED — DETAIL','var(--cyan)')"><div class="vt-eye">Confirmed</div><div class="vt-n">${s.totalIkut}</div><div class="vt-s">${pI}% of ${GRAND}</div><div class="vt-arr">▾</div></div>
+        <div class="vt va" id="vt-pax"      onclick="toggleDrill('pax','${dPax}','TOTAL PAX','var(--amber)')"><div class="vt-eye">Total Pax</div><div class="vt-n">${s.totalPax}</div><div class="vt-s">${s.totalDewasa}D · ${s.totalAnak}A</div><div class="vt-arr">▾</div></div>
+        <div class="vt vr" id="vt-belum"    onclick="toggleDrill('belum','${dBelum}','PENDING — BELUM ISI','var(--amber)')"><div class="vt-eye">Pending</div><div class="vt-n">${s.belum}</div><div class="vt-s">${p(s.belum,GRAND)}% left</div><div class="vt-arr">▾</div></div>
+        <div class="vt vr" id="vt-tidak"    onclick="toggleDrill('tidak','${dTidak}','DECLINED — PER SECTION','var(--red)')"><div class="vt-eye">Declined</div><div class="vt-n">${s.totalTidak}</div><div class="vt-s">${p(s.totalTidak,GRAND)}%</div><div class="vt-arr">▾</div></div>
+        <div class="vt" style="cursor:pointer" id="vt-status"   onclick="toggleDrill('status','${dStatus}','STATUS PER SECTION','var(--purple)')"><div class="vt-eye">Per Section</div><div class="vt-n" style="color:var(--purple)">${Object.keys(TARGETS).length}</div><div class="vt-s">sections</div><div class="vt-arr">▾</div></div>
+        <div class="vt" style="cursor:pointer" id="vt-kend"     onclick="toggleDrill('kend','${dKendaraan}','KENDARAAN SENDIRI','var(--orange)')"><div class="vt-eye">Kend. Sendiri</div><div class="vt-n" style="color:var(--orange)">${s.kendaraan}</div><div class="vt-s">${s.kendaraan>0?s.dataIkut.filter(r=>r[28]==='Kendaraan Sendiri').reduce((a,r)=>a+(parseInt(r[11])||1),0):0} pax</div><div class="vt-arr">▾</div></div>
       </div>
     </div>
 
-    ${['ikut','pax','belum','bus','tidak','kamar'].map(k=>`
+    ${['ikut','pax','belum','tidak','status','kend','bus'].map(k=>`
       <div class="drill" id="drill-${k}">
         <div class="drill-in">
           <div class="drill-hdr"><span id="drill-ttl-${k}"></span><button class="drill-close" onclick="closeDrill('${k}')">✕</button></div>
